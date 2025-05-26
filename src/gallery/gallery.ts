@@ -105,14 +105,6 @@ class GalleryWebview {
 				});
 				break;
 
-			case "POST.gallery.requestSort":
-				this.gFolders = this.customSorter.sort(this.gFolders, message.valueName, message.ascending);
-				reporter.sendTelemetryEvent(`${telemetryPrefix}.requestSort`, {
-					'valueName': this.customSorter.valueName,
-					'ascending': this.customSorter.ascending.toString(),
-				});
-			// DO NOT BREAK HERE; FALL THROUGH TO UPDATE DOMS
-
 			case "POST.gallery.updateColumnCount":
 				webview.postMessage({
 					command: "POST.gallery.setColumnCount",
@@ -122,6 +114,14 @@ class GalleryWebview {
 					'columnCount': message.columnCount.toString()
 				});
 				break;
+
+			case "POST.gallery.requestSort":
+				this.gFolders = this.customSorter.sort(this.gFolders, message.valueName, message.ascending);
+				reporter.sendTelemetryEvent(`${telemetryPrefix}.requestSort`, {
+					'valueName': this.customSorter.valueName,
+					'ascending': this.customSorter.ascending.toString(),
+				});
+			// DO NOT BREAK HERE; FALL THROUGH TO UPDATE DOMS
 
 			case "POST.gallery.requestContentDOMs":
 				const htmlProvider = new HTMLProvider(this.context, webview);
