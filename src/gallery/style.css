@@ -161,6 +161,14 @@ button.codicon+.tooltip-text {
 	border: 0;
 	background-color: hsl(0, 0%, 17%);
 	color: white;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.codicon img {
+	width: 16px;
+	height: 16px;
 }
 
 .codicon:hover {
