@@ -110,7 +110,8 @@ button.codicon+.tooltip-text {
 }
 
 .folder:hover {
-	box-shadow: 0 0px 10px hsl(60, 65%, 90%);
+	box-shadow: 0 0px 5px white;
+	/* box-shadow: 0 0px 10px hsl(60, 65%, 90%); */
 }
 
 .folder-title {
