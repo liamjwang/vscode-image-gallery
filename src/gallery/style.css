@@ -45,7 +45,7 @@ html {
 	text-align: left;
 	padding: 10px;
 	border-radius: 6px;
-	white-space: pre;
+	white-space: pre-wrap;
 }
 
 .tooltip:hover .tooltip-text {
