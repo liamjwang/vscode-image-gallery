@@ -10,7 +10,7 @@ html {
 .grid {
 	display: grid;
 	grid-auto-flow: dense;
-	grid-template-columns: repeat(var(--column-count, auto-fit), 1fr);
+	grid-template-columns: repeat(var(--column-count, auto-fit), var(--column-width, minmax(250px, 1fr)));
 	/* grid-auto-rows: 250px; */
 	grid-gap: 10px;
 	padding: 10px;
@@ -191,6 +191,19 @@ select option {
 	align-items: center;
 	gap: 8px;
 	margin-left: 30px;
+}
+
+.auto-checkbox {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+	color: var(--vscode-foreground);
+	font-size: 13px;
+	cursor: pointer;
+}
+
+.auto-checkbox input[type="checkbox"] {
+	margin: 0;
 }
 
 .column-input-group {

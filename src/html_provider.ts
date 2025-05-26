@@ -106,6 +106,10 @@ export default class HTMLProvider {
 						</button>
 					</div>
 				</div>
+				<label class="auto-checkbox">
+					<input type="checkbox" id="auto-columns" checked />
+					<span>Auto</span>
+				</label>
 			</div>
 			<div class="folder-count"></div>
 		</div>
