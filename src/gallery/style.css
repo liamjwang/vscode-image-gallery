@@ -157,12 +157,12 @@ button.codicon+.tooltip-text {
 	color: white;
 }
 
-.toolbar > div {
+.toolbar>div {
 	display: flex;
 	align-items: center;
 }
 
-.toolbar > div:first-child {
+.toolbar>div:first-child {
 	flex-shrink: 0;
 }
 
@@ -246,14 +246,14 @@ select option {
 }
 
 input[type=number] {
-  appearance: textfield;
-  -moz-appearance: textfield;
+	appearance: textfield;
+	-moz-appearance: textfield;
 }
 
 input[type=number]::-webkit-inner-spin-button,
 input[type=number]::-webkit-outer-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
+	-webkit-appearance: none;
+	margin: 0;
 }
 
 .column-input-group {
