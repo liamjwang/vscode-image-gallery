@@ -135,6 +135,17 @@ button.codicon+.tooltip-text {
 	font-family: arial;
 }
 
+.folder-count {
+	display: flex;
+	flex-grow: 1;
+	justify-content: flex-end;
+	align-items: center;
+	color: white;
+	font-family: arial;
+	white-space: nowrap;
+	margin-left: auto;
+}
+
 .toolbar {
 	position: sticky;
 	z-index: 1000;
@@ -144,6 +155,7 @@ button.codicon+.tooltip-text {
 	flex-wrap: wrap;
 	gap: 15px;
 	background-color: hsl(0, 0%, 17%);
+	bo
 }
 
 .toolbar > div {
