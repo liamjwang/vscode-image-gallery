@@ -29,6 +29,9 @@ function initMessageListeners() {
 				DOMManager.updateGlobalDoms(message);
 				DOMManager.updateGalleryContent();
 				break;
+			case "POST.gallery.setColumnCount":
+				updateColumnCount(message.columnCount);
+				break;
 		}
 	});
 }
@@ -305,6 +308,44 @@ class EventListener {
 		});
 	}
 }
+
+// Column control functionality
+const columnInput = document.getElementById('column-count');
+const columnArrows = document.querySelectorAll('.column-arrow');
+
+function updateColumnCount(count) {
+	const grid = document.querySelector('.grid');
+	if (grid) {
+		grid.style.setProperty('--column-count', count);
+	}
+}
+
+columnInput.addEventListener('change', (e) => {
+	const value = Math.min(Math.max(parseInt(e.target.value) || 1, 1), 100);
+	e.target.value = value;
+	vscode.postMessage({
+		command: 'POST.gallery.updateColumnCount',
+		columnCount: value
+	});
+	updateColumnCount(value);
+});
+
+columnArrows.forEach(arrow => {
+	arrow.addEventListener('click', () => {
+		const currentValue = parseInt(columnInput.value) || 1;
+		const direction = arrow.dataset.direction;
+		const newValue = direction === 'up' 
+			? Math.min(currentValue + 1, 100)
+			: Math.max(currentValue - 1, 1);
+		
+		columnInput.value = newValue;
+		vscode.postMessage({
+			command: 'POST.gallery.updateColumnCount',
+			columnCount: newValue
+		});
+		updateColumnCount(newValue);
+	});
+});
 
 (function () {
 	init();

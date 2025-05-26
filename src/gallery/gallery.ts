@@ -113,6 +113,16 @@ class GalleryWebview {
 				});
 			// DO NOT BREAK HERE; FALL THROUGH TO UPDATE DOMS
 
+			case "POST.gallery.updateColumnCount":
+				webview.postMessage({
+					command: "POST.gallery.setColumnCount",
+					columnCount: message.columnCount
+				});
+				reporter.sendTelemetryEvent(`${telemetryPrefix}.updateColumnCount`, {
+					'columnCount': message.columnCount.toString()
+				});
+				break;
+
 			case "POST.gallery.requestContentDOMs":
 				const htmlProvider = new HTMLProvider(this.context, webview);
 				const response: Record<string, any> = {};
