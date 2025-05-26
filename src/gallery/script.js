@@ -314,10 +314,10 @@ const columnInput = document.getElementById('column-count');
 const columnArrows = document.querySelectorAll('.column-arrow');
 
 function updateColumnCount(count) {
-	const grid = document.querySelector('.grid');
-	if (grid) {
+	const grids = document.querySelectorAll('.grid');
+	grids.forEach(grid => {
 		grid.style.setProperty('--column-count', count);
-	}
+	});
 }
 
 columnInput.addEventListener('change', (e) => {

@@ -205,7 +205,7 @@ select option {
 	width: 50px;
 	height: 22px;
 	padding: 0 4px;
-	background: transparent;
+	background: hsl(0, 0%, 23%);
 	border: none;
 	color: var(--vscode-input-foreground);
 	font-size: 13px;
