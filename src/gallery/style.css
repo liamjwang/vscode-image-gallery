@@ -165,7 +165,7 @@ button.codicon+.tooltip-text {
 
 .codicon:hover {
 	background-color: hsl(180, 0%, 21%);
-	border-radius: 5px;
+	/* border-radius: 5px; */
 }
 
 .sort-options {
