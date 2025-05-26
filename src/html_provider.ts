@@ -73,7 +73,7 @@ export default class HTMLProvider {
 				</button>
 			</div>
 			<div class="sort-options">
-				<span>kljasdfjklas Sort by</span>
+				<span>Sort by</span>
 				<select id="dropdown-sort" class="dropdown">
 					<option value="name">Name</option>
 					<option value="ext">File type</option>
