@@ -101,6 +101,8 @@ button.codicon+.tooltip-text {
 	background-color: hsl(0, 0%, 17%);
 	color: white;
 	border: 0;
+	align-items: center;
+	gap: 10px;
 }
 
 .folder:hover {
@@ -108,23 +110,24 @@ button.codicon+.tooltip-text {
 }
 
 .folder-title {
-	padding-left: 10px;
 	text-align: left;
 	flex-grow: 1;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 
 .folder-arrow {
-	margin-top: -2px;
+	flex-shrink: 0;
+	display: flex;
+	align-items: center;
 }
 
-.folder-count {
-	display: flex;
-	flex-grow: 1;
-	justify-content: flex-end;
-	align-items: center;
+.folder-items-count {
+	flex-shrink: 0;
+	white-space: nowrap;
 	color: white;
 	font-family: arial;
-	white-space: nowrap;
 }
 
 .toolbar {
