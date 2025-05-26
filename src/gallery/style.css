@@ -18,10 +18,10 @@ html {
 
 .image-container {
 	overflow: hidden;
-	padding: 2%;
+	/* padding: 2%; */
 	width: 100%;
 	justify-self: center;
-	border-radius: 5px;
+	/* border-radius: 5px; */
 	background-color: none;
 	transform: translate3d(0, 0, 1px);
 	-webkit-transform: translate3d(0, 0, 1px);
