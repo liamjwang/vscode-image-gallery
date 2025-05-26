@@ -243,7 +243,6 @@ select option {
 	display: flex;
 	align-items: center;
 	gap: 4px;
-	color: var(--vscode-foreground);
 	font-size: 13px;
 	cursor: pointer;
 	white-space: nowrap;
