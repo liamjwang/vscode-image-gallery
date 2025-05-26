@@ -112,9 +112,9 @@ button.codicon+.tooltip-text {
 .folder-title {
 	text-align: left;
 	flex-grow: 1;
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
+	white-space: normal;
+	word-break: break-word;
+	min-width: 0;
 }
 
 .folder-arrow {
