@@ -103,6 +103,7 @@ button.codicon+.tooltip-text {
 	border: 0;
 	align-items: center;
 	gap: 10px;
+	border-radius: 10px;
 }
 
 .folder:hover {
@@ -155,7 +156,7 @@ button.codicon+.tooltip-text {
 	flex-wrap: wrap;
 	gap: 15px;
 	background-color: hsl(0, 0%, 17%);
-	bo
+	border-radius: 10px;
 }
 
 .toolbar > div {
