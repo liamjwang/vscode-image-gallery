@@ -64,7 +64,7 @@ button.codicon+.tooltip-text {
 }
 
 .image-container:hover {
-	box-shadow: 0 0 10px white;
+	box-shadow: 0 0 4px white;
 }
 
 .image {
