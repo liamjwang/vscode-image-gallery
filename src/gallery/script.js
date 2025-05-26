@@ -336,7 +336,7 @@ function updateColumnControlState() {
 }
 
 columnInput.addEventListener('change', (e) => {
-	if (autoCheckbox.checked) return;
+	if (autoCheckbox.checked) {return;}
 	const value = Math.min(Math.max(parseInt(e.target.value) || 1, 1), 100);
 	e.target.value = value;
 	vscode.postMessage({
@@ -348,7 +348,7 @@ columnInput.addEventListener('change', (e) => {
 
 columnArrows.forEach(arrow => {
 	arrow.addEventListener('click', () => {
-		if (autoCheckbox.checked) return;
+		if (autoCheckbox.checked) {return;}
 		const currentValue = parseInt(columnInput.value) || 1;
 		const direction = arrow.dataset.direction;
 		const newValue = direction === 'up' 
