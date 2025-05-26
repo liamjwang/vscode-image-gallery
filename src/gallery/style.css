@@ -120,10 +120,11 @@ button.codicon+.tooltip-text {
 .folder-count {
 	display: flex;
 	flex-grow: 1;
-	justify-content: right;
+	justify-content: flex-end;
 	align-items: center;
 	color: white;
 	font-family: arial;
+	white-space: nowrap;
 }
 
 .toolbar {
@@ -132,8 +133,18 @@ button.codicon+.tooltip-text {
 	top: 0;
 	padding: 15px;
 	display: flex;
-	flex-grow: 1;
+	flex-wrap: wrap;
+	gap: 15px;
 	background-color: hsl(0, 0%, 17%);
+}
+
+.toolbar > div {
+	display: flex;
+	align-items: center;
+}
+
+.toolbar > div:first-child {
+	flex-shrink: 0;
 }
 
 .toolbar-item {
@@ -157,16 +168,14 @@ button.codicon+.tooltip-text {
 .sort-options {
 	display: flex;
 	align-items: center;
-	justify-content: center;
-	margin-left: 30px;
+	flex-wrap: wrap;
+	gap: 10px;
+	min-width: 200px;
 }
 
 .sort-options span {
 	font-size: 15px;
-	margin-left: 10px;
-	margin-right: 10px;
-	align-items: center;
-	justify-content: center;
+	white-space: nowrap;
 }
 
 .dropdown {
@@ -174,6 +183,7 @@ button.codicon+.tooltip-text {
 	background-color: hsl(0, 0%, 23%);
 	color: white;
 	border-width: 0px;
+	min-width: 100px;
 }
 
 .dropdown:checked {
@@ -189,8 +199,9 @@ select option {
 .column-control {
 	display: flex;
 	align-items: center;
+	flex-wrap: wrap;
 	gap: 8px;
-	margin-left: 30px;
+	min-width: 200px;
 }
 
 .auto-checkbox {
@@ -200,6 +211,7 @@ select option {
 	color: var(--vscode-foreground);
 	font-size: 13px;
 	cursor: pointer;
+	white-space: nowrap;
 }
 
 .auto-checkbox input[type="checkbox"] {
@@ -212,6 +224,7 @@ select option {
 	background: hsl(0, 0%, 23%);
 	border: 1px solid var(--vscode-input-border);
 	border-radius: 2px;
+	flex-shrink: 0;
 }
 
 .column-input-group:has(input:disabled) {
