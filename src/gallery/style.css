@@ -7,6 +7,7 @@ html {
 	overflow-y: scroll;
 }
 
+
 .grid {
 	display: grid;
 	grid-auto-flow: dense;
@@ -156,9 +157,10 @@ button.codicon+.tooltip-text {
 	padding: 15px;
 	display: flex;
 	flex-wrap: wrap;
-	gap: 15px;
+	gap: 30px;
 	background-color: hsl(0, 0%, 17%);
 	border-radius: 10px;
+	color: white;
 }
 
 .toolbar > div {
@@ -184,6 +186,7 @@ button.codicon+.tooltip-text {
 	display: flex;
 	align-items: center;
 	justify-content: center;
+	border-radius: 5px;
 }
 
 .codicon img {
@@ -215,6 +218,7 @@ button.codicon+.tooltip-text {
 	color: white;
 	border-width: 0px;
 	min-width: 100px;
+	border-radius: 5px;
 }
 
 .dropdown:checked {
@@ -265,7 +269,7 @@ input[type=number]::-webkit-outer-spin-button {
 	align-items: center;
 	background: hsl(0, 0%, 23%);
 	border: 1px solid var(--vscode-input-border);
-	border-radius: 2px;
+	border-radius: 5px;
 	flex-shrink: 0;
 }
 
