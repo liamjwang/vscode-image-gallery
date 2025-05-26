@@ -18,7 +18,7 @@ html {
 
 .image-container {
 	overflow: hidden;
-	/* padding: 2%; */
+	padding: 2%;
 	width: 100%;
 	justify-self: center;
 	/* border-radius: 5px; */
