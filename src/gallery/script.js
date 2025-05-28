@@ -28,6 +28,8 @@ function initMessageListeners() {
 			case "POST.gallery.responseContentDOMs":
 				DOMManager.updateGlobalDoms(message);
 				DOMManager.updateGalleryContent();
+				// Apply current settings after content is rendered
+				updateColumnCount(columnInput.value);
 				break;
 			case "POST.gallery.setColumnCount":
 				columnInput.value = message.columnCount;
@@ -381,7 +383,7 @@ autoCheckbox.addEventListener('change', () => {
 // Initialize column control state
 updateColumnControlState();
 
-// Request initial settings
+// Request initial content
 vscode.postMessage({
 	command: "POST.gallery.requestContentDOMs"
 });

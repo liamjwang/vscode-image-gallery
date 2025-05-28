@@ -144,11 +144,6 @@ class GalleryWebview {
 					columnCount: message.columnCount,
 					autoColumns: message.autoColumns
 				});
-				webview.postMessage({
-					command: "POST.gallery.setColumnCount",
-					columnCount: message.columnCount,
-					autoColumns: message.autoColumns
-				});
 				reporter.sendTelemetryEvent(`${telemetryPrefix}.updateColumnCount`, {
 					'columnCount': message.columnCount.toString()
 				});
