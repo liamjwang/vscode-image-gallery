@@ -109,6 +109,13 @@ class GalleryWebview {
 			autoColumns: settings.autoColumns
 		});
 
+		// Send initial sort settings
+		panel.webview.postMessage({
+			command: "POST.gallery.setSortSettings",
+			valueName: settings.sortBy,
+			ascending: settings.sortAscending
+		});
+
 		const imageSizeStat = utils.getImageSizeStat(this.gFolders);
 		reporter.sendTelemetryEvent('gallery.createPanel', {}, {
 			"duration": Date.now() - startTime,

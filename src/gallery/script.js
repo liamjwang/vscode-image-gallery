@@ -19,6 +19,37 @@ function init() {
 	EventListener.addAllToToolbar();
 }
 
+// Debounce function to limit how often we save settings
+function debounce(func, wait) {
+	let timeout;
+	return function executedFunction(...args) {
+		const later = () => {
+			clearTimeout(timeout);
+			func(...args);
+		};
+		clearTimeout(timeout);
+		timeout = setTimeout(later, wait);
+	};
+}
+
+// Debounced function to save column settings
+const debouncedSaveColumnSettings = debounce((settings) => {
+	vscode.postMessage({
+		command: 'POST.gallery.updateColumnCount',
+		columnCount: settings.columnCount,
+		autoColumns: settings.autoColumns
+	});
+}, 500);
+
+// Debounced function to save sort settings
+const debouncedSaveSortSettings = debounce((settings) => {
+	vscode.postMessage({
+		command: 'POST.gallery.requestSort',
+		valueName: settings.valueName,
+		ascending: settings.ascending
+	});
+}, 500);
+
 function initMessageListeners() {
 	window.addEventListener("message", event => {
 		const message = event.data;
@@ -36,6 +67,16 @@ function initMessageListeners() {
 				autoCheckbox.checked = message.autoColumns;
 				updateColumnControlState();
 				updateColumnCount(message.columnCount);
+				break;
+			case "POST.gallery.setSortSettings":
+				const dropdownDOM = document.querySelector(".toolbar .dropdown");
+				const sortOrderDOM = document.querySelector(".toolbar .sort-order-arrow-img");
+				dropdownDOM.value = message.valueName;
+				if (message.ascending) {
+					sortOrderDOM.src = sortOrderDOM.dataset.arrowUp;
+				} else {
+					sortOrderDOM.src = sortOrderDOM.dataset.arrowDown;
+				}
 				break;
 		}
 	});
@@ -306,10 +347,9 @@ class EventListener {
 	static sortRequest() {
 		const dropdownDOM = document.querySelector(".toolbar .dropdown");
 		const sortOrderDOM = document.querySelector(".toolbar .sort-order-arrow-img");
-		vscode.postMessage({
-			command: "POST.gallery.requestSort",
+		debouncedSaveSortSettings({
 			valueName: dropdownDOM.value,
-			ascending: sortOrderDOM.src.includes("arrow-up.svg") ? true : false,
+			ascending: sortOrderDOM.src.includes("arrow-up.svg")
 		});
 	}
 }
@@ -344,12 +384,11 @@ columnInput.addEventListener('change', (e) => {
 	if (autoCheckbox.checked) {return;}
 	const value = Math.min(Math.max(parseInt(e.target.value) || 1, 1), 100);
 	e.target.value = value;
-	vscode.postMessage({
-		command: 'POST.gallery.updateColumnCount',
+	updateColumnCount(value);
+	debouncedSaveColumnSettings({
 		columnCount: value,
 		autoColumns: autoCheckbox.checked
 	});
-	updateColumnCount(value);
 });
 
 columnArrows.forEach(arrow => {
@@ -362,19 +401,17 @@ columnArrows.forEach(arrow => {
 			: Math.max(currentValue - 1, 1);
 		
 		columnInput.value = newValue;
-		vscode.postMessage({
-			command: 'POST.gallery.updateColumnCount',
+		updateColumnCount(newValue);
+		debouncedSaveColumnSettings({
 			columnCount: newValue,
 			autoColumns: autoCheckbox.checked
 		});
-		updateColumnCount(newValue);
 	});
 });
 
 autoCheckbox.addEventListener('change', () => {
 	updateColumnControlState();
-	vscode.postMessage({
-		command: 'POST.gallery.updateColumnCount',
+	debouncedSaveColumnSettings({
 		columnCount: columnInput.value,
 		autoColumns: autoCheckbox.checked
 	});
