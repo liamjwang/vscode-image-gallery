@@ -42,6 +42,29 @@ class GalleryWebview {
 
 	constructor(private readonly context: vscode.ExtensionContext) { }
 
+	private loadGallerySettings() {
+		const config = vscode.workspace.getConfiguration('gallery');
+		return {
+			columnCount: config.get('columnCount', 4),
+			autoColumns: config.get('autoColumns', true),
+			sortBy: config.get('sortBy', 'name'),
+			sortAscending: config.get('sortAscending', true)
+		};
+	}
+
+	private async saveGallerySettings(settings: {
+		columnCount?: number;
+		autoColumns?: boolean;
+		sortBy?: string;
+		sortAscending?: boolean;
+	}) {
+		const config = vscode.workspace.getConfiguration('gallery');
+		await config.update('columnCount', settings.columnCount, vscode.ConfigurationTarget.Global);
+		await config.update('autoColumns', settings.autoColumns, vscode.ConfigurationTarget.Global);
+		await config.update('sortBy', settings.sortBy, vscode.ConfigurationTarget.Global);
+		await config.update('sortAscending', settings.sortAscending, vscode.ConfigurationTarget.Global);
+	}
+
 	private async getImageUris(galleryFolder?: vscode.Uri | string) {
 		/**
 		 * Recursively get the URIs of all the images within the folder.
@@ -72,8 +95,19 @@ class GalleryWebview {
 		const htmlProvider = new HTMLProvider(this.context, panel.webview);
 		const imageUris = await this.getImageUris(galleryFolder);
 		this.gFolders = await utils.getFolders(imageUris);
-		this.gFolders = this.customSorter.sort(this.gFolders);
+		
+		// Load settings and apply initial sort
+		const settings = this.loadGallerySettings();
+		this.gFolders = this.customSorter.sort(this.gFolders, settings.sortBy as any, settings.sortAscending);
+		
 		panel.webview.html = htmlProvider.fullHTML();
+
+		// Send initial settings to webview
+		panel.webview.postMessage({
+			command: "POST.gallery.setColumnCount",
+			columnCount: settings.columnCount,
+			autoColumns: settings.autoColumns
+		});
 
 		const imageSizeStat = utils.getImageSizeStat(this.gFolders);
 		reporter.sendTelemetryEvent('gallery.createPanel', {}, {
@@ -106,9 +140,14 @@ class GalleryWebview {
 				break;
 
 			case "POST.gallery.updateColumnCount":
+				this.saveGallerySettings({
+					columnCount: message.columnCount,
+					autoColumns: message.autoColumns
+				});
 				webview.postMessage({
 					command: "POST.gallery.setColumnCount",
-					columnCount: message.columnCount
+					columnCount: message.columnCount,
+					autoColumns: message.autoColumns
 				});
 				reporter.sendTelemetryEvent(`${telemetryPrefix}.updateColumnCount`, {
 					'columnCount': message.columnCount.toString()
@@ -116,6 +155,10 @@ class GalleryWebview {
 				break;
 
 			case "POST.gallery.requestSort":
+				this.saveGallerySettings({
+					sortBy: message.valueName,
+					sortAscending: message.ascending
+				});
 				this.gFolders = this.customSorter.sort(this.gFolders, message.valueName, message.ascending);
 				reporter.sendTelemetryEvent(`${telemetryPrefix}.requestSort`, {
 					'valueName': this.customSorter.valueName,

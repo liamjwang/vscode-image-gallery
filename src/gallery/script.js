@@ -30,6 +30,9 @@ function initMessageListeners() {
 				DOMManager.updateGalleryContent();
 				break;
 			case "POST.gallery.setColumnCount":
+				columnInput.value = message.columnCount;
+				autoCheckbox.checked = message.autoColumns;
+				updateColumnControlState();
 				updateColumnCount(message.columnCount);
 				break;
 		}
@@ -341,7 +344,8 @@ columnInput.addEventListener('change', (e) => {
 	e.target.value = value;
 	vscode.postMessage({
 		command: 'POST.gallery.updateColumnCount',
-		columnCount: value
+		columnCount: value,
+		autoColumns: autoCheckbox.checked
 	});
 	updateColumnCount(value);
 });
@@ -358,7 +362,8 @@ columnArrows.forEach(arrow => {
 		columnInput.value = newValue;
 		vscode.postMessage({
 			command: 'POST.gallery.updateColumnCount',
-			columnCount: newValue
+			columnCount: newValue,
+			autoColumns: autoCheckbox.checked
 		});
 		updateColumnCount(newValue);
 	});
@@ -368,12 +373,18 @@ autoCheckbox.addEventListener('change', () => {
 	updateColumnControlState();
 	vscode.postMessage({
 		command: 'POST.gallery.updateColumnCount',
-		columnCount: autoCheckbox.checked ? null : columnInput.value
+		columnCount: columnInput.value,
+		autoColumns: autoCheckbox.checked
 	});
 });
 
 // Initialize column control state
 updateColumnControlState();
+
+// Request initial settings
+vscode.postMessage({
+	command: "POST.gallery.requestContentDOMs"
+});
 
 (function () {
 	init();

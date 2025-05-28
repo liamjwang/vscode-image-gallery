@@ -73,6 +73,29 @@
 					"type": "boolean",
 					"default": true,
 					"markdownDescription": "Enable / disable telemetry of this extension. If any of the global telemetry settings, including `telemetryLevel`, `isTelemetryEnabled`, `onDidChangeTelemetryEnabled`, rejects telemetry, this setting will be treated as `false`, i.e. this extension will not send any telemetry."
+				},
+				"gallery.columnCount": {
+					"type": "number",
+					"default": 4,
+					"minimum": 1,
+					"maximum": 100,
+					"markdownDescription": "Number of columns to display in the image gallery grid. Only used when auto-columns is disabled."
+				},
+				"gallery.autoColumns": {
+					"type": "boolean",
+					"default": true,
+					"markdownDescription": "Whether to automatically adjust the number of columns based on the viewport width."
+				},
+				"gallery.sortBy": {
+					"type": "string",
+					"enum": ["name", "ext", "size", "ctime", "mtime"],
+					"default": "name",
+					"markdownDescription": "The property to sort images by."
+				},
+				"gallery.sortAscending": {
+					"type": "boolean",
+					"default": true,
+					"markdownDescription": "Whether to sort in ascending order."
 				}
 			}
 		},
