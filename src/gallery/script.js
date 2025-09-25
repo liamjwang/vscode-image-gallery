@@ -17,6 +17,8 @@ function init() {
 	initMessageListeners();
 	DOMManager.requestContentDOMs();
 	EventListener.addAllToToolbar();
+	// Initialize thumbnail size
+	EventListener.updateThumbnailSize(250);
 }
 
 function initMessageListeners() {
@@ -163,6 +165,18 @@ class EventListener {
 				EventListener.sortRequest();
 			}
 		);
+		const thumbnailSlider = document.querySelector("#thumbnail-size-slider");
+		if (thumbnailSlider) {
+			thumbnailSlider.addEventListener(
+				"input", (event) => EventListener.updateThumbnailSize(event.target.value)
+			);
+		}
+		const searchInput = document.querySelector("#search-input");
+		if (searchInput) {
+			searchInput.addEventListener(
+				"input", (event) => EventListener.filterImages(event.target.value)
+			);
+		}
 	}
 
 	static addToFolderBar(folderBar) {
@@ -302,6 +316,48 @@ class EventListener {
 			command: "POST.gallery.requestSort",
 			valueName: dropdownDOM.value,
 			ascending: sortOrderDOM.src.includes("arrow-up.svg") ? true : false,
+		});
+	}
+
+	static updateThumbnailSize(size) {
+		document.documentElement.style.setProperty('--thumbnail-size', size + 'px');
+	}
+
+	static filterImages(searchTerm) {
+		const term = searchTerm.toLowerCase().trim();
+		
+		// Get all image containers
+		Object.values(gFolders).forEach(folder => {
+			let visibleCount = 0;
+			
+			Object.values(folder.images).forEach(image => {
+				const container = image.container;
+				const filename = container.querySelector('.filename').textContent.toLowerCase();
+				
+				if (term === '' || filename.includes(term)) {
+					container.style.display = '';
+					visibleCount++;
+				} else {
+					container.style.display = 'none';
+				}
+			});
+			
+			// Update folder visibility and count
+			const folderGrid = folder.grid;
+			if (visibleCount === 0 && term !== '') {
+				folderGrid.style.display = 'none';
+				folder.bar.style.display = 'none';
+			} else {
+				folderGrid.style.display = 'grid';
+				folder.bar.style.display = 'flex';
+			}
+			
+			// Update the image count in folder bar
+			const countText = (object, count) => `${count} ${object}${count === 1 ? "" : "s"} found`;
+			const countElement = folder.bar.querySelector(`#${folder.bar.id}-items-count`);
+			if (countElement) {
+				countElement.textContent = countText("image", visibleCount);
+			}
 		});
 	}
 }
