@@ -109,12 +109,15 @@ export default class HTMLProvider {
 	folderBarHTML(folder: TFolder, collapsed: boolean = false) {
 		let fsPath = this.webview.asWebviewUri(vscode.Uri.parse(folder.path)).fsPath;
 		fsPath = fsPath[0].toUpperCase() + fsPath.slice(1);
+		const isLoaded = folder.loaded !== false;
+		const loadingClass = isLoaded ? '' : ' folder-loading';
 		return `
 		<button
 			id="${folder.id}"
 			data-path="${folder.path}"
 			data-state="${collapsed ? 'collapsed' : 'expanded'}"
-			class="folder"
+			data-loaded="${isLoaded}"
+			class="folder${loadingClass}"
 		>
 			<div
 				id="${folder.id}-arrow"
@@ -129,7 +132,7 @@ export default class HTMLProvider {
 				/>
 			</div>
 			<div id="${folder.id}-title" class="folder-title">${fsPath}</div>
-			<div id="${folder.id}-items-count" class="folder-items-count"></div>
+			<div id="${folder.id}-items-count" class="folder-items-count">${!isLoaded ? '⏳' : ''}</div>
 		</button>
 		`.trim();
 	}

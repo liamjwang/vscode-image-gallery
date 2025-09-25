@@ -70,24 +70,27 @@ class GalleryWebview {
 		);
 
 		const htmlProvider = new HTMLProvider(this.context, panel.webview);
+		
+		// Fast initial load - just folder structure
 		const imageUris = await this.getImageUris(galleryFolder);
-		this.gFolders = await utils.getFolders(imageUris);
+		this.gFolders = await utils.getFoldersStructure(imageUris);
 		this.gFolders = this.customSorter.sort(this.gFolders);
 		panel.webview.html = htmlProvider.fullHTML();
 
-		const imageSizeStat = utils.getImageSizeStat(this.gFolders);
+		// Send quick telemetry for initial load
+		const totalImageCount = Object.values(this.gFolders).reduce((sum, folder) => sum + (folder.imageCount || 0), 0);
 		reporter.sendTelemetryEvent('gallery.createPanel', {}, {
 			"duration": Date.now() - startTime,
 			"folderCount": Object.keys(this.gFolders).length,
-			"imageCount": imageSizeStat.count,
-			"imageSizeMean": imageSizeStat.mean,
-			"imageSizeStd": imageSizeStat.std,
+			"imageCount": totalImageCount,
+			"imageSizeMean": 0, // Will be calculated when metadata loads
+			"imageSizeStd": 0,
 		});
 
 		return panel;
 	}
 
-	public messageListener(message: Record<string, any>, webview: vscode.Webview) {
+	public async messageListener(message: Record<string, any>, webview: vscode.Webview) {
 		const telemetryPrefix = "gallery.messageListener";
 		switch (message.command) {
 			case "POST.gallery.openImageViewer":
@@ -113,19 +116,58 @@ class GalleryWebview {
 				});
 			// DO NOT BREAK HERE; FALL THROUGH TO UPDATE DOMS
 
+			case "POST.gallery.loadFolderMetadata":
+				const folderId = message.folderId;
+				if (this.gFolders[folderId] && !this.gFolders[folderId].loaded) {
+					try {
+						// Load metadata for this folder
+						this.gFolders[folderId] = await utils.loadFolderMetadata(this.gFolders[folderId]);
+						
+						// Send updated folder data
+						const htmlProvider = new HTMLProvider(this.context, webview);
+						const folder = this.gFolders[folderId];
+						const response = {
+							folderId: folder.id,
+							status: "loaded",
+							barHtml: htmlProvider.folderBarHTML(folder),
+							gridHtml: htmlProvider.imageGridHTML(folder, true),
+							images: Object.fromEntries(
+								Object.values(folder.images).map(
+									image => [image.id, {
+										status: image.status,
+										containerHtml: htmlProvider.singleImageHTML(image),
+									}]
+								)
+							),
+						};
+						
+						webview.postMessage({
+							command: "POST.gallery.folderMetadataLoaded",
+							content: JSON.stringify(response),
+						});
+					} catch (error) {
+						webview.postMessage({
+							command: "POST.gallery.folderMetadataError",
+							folderId: folderId,
+							error: error instanceof Error ? error.message : 'Unknown error'
+						});
+					}
+				}
+				break;
+
 			case "POST.gallery.requestContentDOMs":
-				const htmlProvider = new HTMLProvider(this.context, webview);
+				const htmlProvider2 = new HTMLProvider(this.context, webview);
 				const response: Record<string, any> = {};
 				for (const [_idx, folder] of Object.values(this.gFolders).entries()) {
 					response[folder.id] = {
-						status: "",
-						barHtml: htmlProvider.folderBarHTML(folder),
-						gridHtml: htmlProvider.imageGridHTML(folder, true),
+						status: folder.loaded ? "loaded" : "structure",
+						barHtml: htmlProvider2.folderBarHTML(folder),
+						gridHtml: htmlProvider2.imageGridHTML(folder, true),
 						images: Object.fromEntries(
 							Object.values(folder.images).map(
 								image => [image.id, {
 									status: image.status,
-									containerHtml: htmlProvider.singleImageHTML(image),
+									containerHtml: htmlProvider2.singleImageHTML(image),
 								}]
 							)
 						),
