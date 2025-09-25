@@ -31,11 +31,14 @@ function initMessageListeners() {
 				DOMManager.updateGlobalDoms(message);
 				DOMManager.updateGalleryContent();
 				break;
-			case "POST.gallery.folderMetadataLoaded":
-				DOMManager.updateFolderMetadata(message);
+			case "POST.gallery.metadataProgress":
+				ProgressManager.updateProgress(message);
 				break;
-			case "POST.gallery.folderMetadataError":
-				DOMManager.handleMetadataError(message);
+			case "POST.gallery.metadataComplete":
+				ProgressManager.hideProgress();
+				break;
+			case "POST.gallery.sortBusy":
+				ProgressManager.showSortBusy(message);
 				break;
 		}
 	});
@@ -153,56 +156,69 @@ class DOMManager {
 		}
 	}
 
-	static updateFolderMetadata(response) {
-		const folderData = JSON.parse(response.content);
-		const folderId = folderData.folderId;
+}
+
+class ProgressManager {
+	static updateProgress(message) {
+		const progress = message.progress;
+		let progressBar = document.querySelector('.progress-bar');
 		
-		if (gFolders[folderId]) {
-			// Update the folder with loaded metadata
-			const oldFolder = gFolders[folderId];
-			
-			// Replace folder bar
-			const newBar = DOMManager.htmlToDOM(folderData.barHtml);
-			oldFolder.bar.replaceWith(newBar);
-			gFolders[folderId].bar = newBar;
-			EventListener.addToFolderBar(newBar);
-			
-			// Update images with metadata
-			for (const [imageId, image] of Object.entries(folderData.images)) {
-				if (gFolders[folderId].images[imageId]) {
-					const newContainer = DOMManager.htmlToDOM(image.containerHtml);
-					if (gFolders[folderId].images[imageId].container) {
-						gFolders[folderId].images[imageId].container.replaceWith(newContainer);
-					}
-					gFolders[folderId].images[imageId].container = newContainer;
-					EventListener.addToImageContainer(newContainer);
-				}
-			}
-			
-			// Update counts
-			const countText = (object, count) => `${count} ${object}${count === 1 ? "" : "s"} found`;
-			const nImages = Object.keys(folderData.images).length;
-			gFolders[folderId].bar.querySelector(`#${folderId}-items-count`).textContent = countText("image", nImages);
-			
-			// Mark as loaded
-			gFolders[folderId].bar.dataset.loaded = "true";
-			gFolders[folderId].bar.classList.remove("folder-loading");
-			
-			// Update gallery content
-			DOMManager.updateGalleryContent();
+		if (!progressBar) {
+			// Create progress bar
+			const toolbar = document.querySelector('.toolbar');
+			const progressContainer = document.createElement('div');
+			progressContainer.className = 'progress-container';
+			progressContainer.innerHTML = `
+				<div class="progress-text">Loading metadata...</div>
+				<div class="progress-bar-container">
+					<div class="progress-bar"></div>
+				</div>
+			`;
+			toolbar.appendChild(progressContainer);
+			progressBar = progressContainer.querySelector('.progress-bar');
+		}
+		
+		const percentage = Math.round((progress.loaded / progress.total) * 100);
+		progressBar.style.width = percentage + '%';
+		
+		const progressText = document.querySelector('.progress-text');
+		if (progressText) {
+			progressText.textContent = `Loading metadata... ${progress.loaded}/${progress.total} (${percentage}%)`;
 		}
 	}
-
-	static handleMetadataError(response) {
-		const folderId = response.folderId;
-		if (gFolders[folderId]) {
-			const countElement = gFolders[folderId].bar.querySelector(`#${folderId}-items-count`);
-			if (countElement) {
-				countElement.textContent = "⚠️ Error loading";
-				countElement.style.color = "hsl(0, 70%, 60%)";
-			}
-			gFolders[folderId].bar.classList.remove("folder-loading");
+	
+	static hideProgress() {
+		const progressContainer = document.querySelector('.progress-container');
+		if (progressContainer) {
+			progressContainer.remove();
 		}
+		ProgressManager.hideSortBusy();
+	}
+	
+	static showSortBusy(message) {
+		const dropdown = document.querySelector('.toolbar .dropdown');
+		const sortArrow = document.querySelector('.toolbar .sort-order-arrow');
+		
+		// Disable sort controls
+		dropdown.disabled = true;
+		sortArrow.style.opacity = '0.5';
+		sortArrow.style.pointerEvents = 'none';
+		
+		// Show busy indicator
+		const progressText = document.querySelector('.progress-text');
+		if (progressText) {
+			progressText.textContent = `Sorting by ${message.sortType}... ${message.progress.loaded}/${message.progress.total} loaded`;
+		}
+	}
+	
+	static hideSortBusy() {
+		const dropdown = document.querySelector('.toolbar .dropdown');
+		const sortArrow = document.querySelector('.toolbar .sort-order-arrow');
+		
+		// Re-enable sort controls
+		dropdown.disabled = false;
+		sortArrow.style.opacity = '1';
+		sortArrow.style.pointerEvents = 'auto';
 	}
 }
 
@@ -330,16 +346,13 @@ class EventListener {
 	static expandFolderBar(folderDOM) {
 		const elements = EventListener.getFolderAssociatedElements(folderDOM);
 		
-		// Check if metadata needs to be loaded
+		// Load metadata for this folder if not loaded
 		if (folderDOM.dataset.loaded === "false") {
-			// Show loading state
-			folderDOM.classList.add("folder-loading");
 			const countElement = folderDOM.querySelector(`#${folderDOM.id}-items-count`);
 			if (countElement) {
-				countElement.innerHTML = '⏳ Loading...';
+				countElement.textContent = "⏳ Loading...";
 			}
 			
-			// Request metadata loading
 			vscode.postMessage({
 				command: "POST.gallery.loadFolderMetadata",
 				folderId: folderDOM.id

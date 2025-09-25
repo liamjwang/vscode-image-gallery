@@ -39,6 +39,8 @@ export function deactivate() {
 class GalleryWebview {
 	private gFolders: Record<string, TFolder> = {};
 	private customSorter: CustomSorter = new CustomSorter();
+	private metadataLoadingInProgress: boolean = false;
+	private metadataProgress: { loaded: number; total: number } = { loaded: 0, total: 0 };
 
 	constructor(private readonly context: vscode.ExtensionContext) { }
 
@@ -87,7 +89,45 @@ class GalleryWebview {
 			"imageSizeStd": 0,
 		});
 
+
 		return panel;
+	}
+
+	private async loadMetadataForSort(folders: TFolder[], sortBy: "name" | "ext" | "size" | "ctime" | "mtime", ascending: boolean, webview: vscode.Webview) {
+		if (this.metadataLoadingInProgress) { return; }
+		
+		this.metadataLoadingInProgress = true;
+		let loaded = 0;
+		const total = folders.length;
+
+		// Load folders one by one to show progress
+		for (const folder of folders) {
+			try {
+				this.gFolders[folder.id] = await utils.loadFolderMetadata(folder);
+				loaded++;
+				
+				// Send progress update
+				webview.postMessage({
+					command: "POST.gallery.metadataProgress", 
+					progress: { loaded, total }
+				});
+			} catch (error) {
+				console.error(`Failed to load metadata for folder ${folder.id}:`, error);
+				loaded++;
+			}
+		}
+
+		this.metadataLoadingInProgress = false;
+
+		// Now sort with all metadata loaded
+		this.gFolders = this.customSorter.sort(this.gFolders, sortBy, ascending);
+		
+		// Send completion and updated content
+		webview.postMessage({
+			command: "POST.gallery.metadataComplete"
+		});
+		
+		this.messageListener({ command: "POST.gallery.requestContentDOMs" }, webview).catch(console.error);
 	}
 
 	public async messageListener(message: Record<string, any>, webview: vscode.Webview) {
@@ -109,7 +149,24 @@ class GalleryWebview {
 				break;
 
 			case "POST.gallery.requestSort":
-				this.gFolders = this.customSorter.sort(this.gFolders, message.valueName, message.ascending);
+				const needsMetadata = ["size", "ctime", "mtime"].includes(message.valueName);
+				const unloadedFolders = Object.values(this.gFolders).filter(folder => !folder.loaded);
+				
+				if (needsMetadata && unloadedFolders.length > 0) {
+					// Show busy indicator
+					webview.postMessage({
+						command: "POST.gallery.sortBusy",
+						sortType: message.valueName,
+						progress: { loaded: 0, total: unloadedFolders.length }
+					});
+					
+					// Load metadata for unloaded folders only
+					this.loadMetadataForSort(unloadedFolders, message.valueName, message.ascending, webview);
+				} else {
+					// Sort immediately
+					this.gFolders = this.customSorter.sort(this.gFolders, message.valueName, message.ascending);
+				}
+				
 				reporter.sendTelemetryEvent(`${telemetryPrefix}.requestSort`, {
 					'valueName': this.customSorter.valueName,
 					'ascending': this.customSorter.ascending.toString(),
@@ -120,37 +177,13 @@ class GalleryWebview {
 				const folderId = message.folderId;
 				if (this.gFolders[folderId] && !this.gFolders[folderId].loaded) {
 					try {
-						// Load metadata for this folder
+						// Load metadata for this specific folder
 						this.gFolders[folderId] = await utils.loadFolderMetadata(this.gFolders[folderId]);
 						
-						// Send updated folder data
-						const htmlProvider = new HTMLProvider(this.context, webview);
-						const folder = this.gFolders[folderId];
-						const response = {
-							folderId: folder.id,
-							status: "loaded",
-							barHtml: htmlProvider.folderBarHTML(folder),
-							gridHtml: htmlProvider.imageGridHTML(folder, true),
-							images: Object.fromEntries(
-								Object.values(folder.images).map(
-									image => [image.id, {
-										status: image.status,
-										containerHtml: htmlProvider.singleImageHTML(image),
-									}]
-								)
-							),
-						};
-						
-						webview.postMessage({
-							command: "POST.gallery.folderMetadataLoaded",
-							content: JSON.stringify(response),
-						});
+						// Send updated content for this folder
+						this.messageListener({ command: "POST.gallery.requestContentDOMs" }, webview).catch(console.error);
 					} catch (error) {
-						webview.postMessage({
-							command: "POST.gallery.folderMetadataError",
-							folderId: folderId,
-							error: error instanceof Error ? error.message : 'Unknown error'
-						});
+						console.error(`Failed to load metadata for folder ${folderId}:`, error);
 					}
 				}
 				break;
@@ -211,7 +244,7 @@ class GalleryWebview {
 			} else {
 				this.gFolders[folder.id] = folder;
 			}
-			this.messageListener({ command: "POST.gallery.requestSort" }, webview);
+			this.messageListener({ command: "POST.gallery.requestSort" }, webview).catch(console.error);
 			reporter.sendTelemetryEvent(`${telemetryPrefix}.didCreate`, {}, getMeasurementProperties(folders));
 		});
 		watcher.onDidDelete(async uri => {
@@ -226,7 +259,7 @@ class GalleryWebview {
 					delete this.gFolders[folder.id];
 				}
 			}
-			this.messageListener({ command: "POST.gallery.requestSort" }, webview);
+			this.messageListener({ command: "POST.gallery.requestSort" }, webview).catch(console.error);
 			reporter.sendTelemetryEvent(`${telemetryPrefix}.didDelete`, {}, getMeasurementProperties(folders));
 		});
 		watcher.onDidChange(async uri => {
@@ -238,7 +271,7 @@ class GalleryWebview {
 			if (this.gFolders.hasOwnProperty(folder.id) && this.gFolders[folder.id].images.hasOwnProperty(image.id)) {
 				image.status = "refresh";
 				this.gFolders[folder.id].images[image.id] = image;
-				this.messageListener({ command: "POST.gallery.requestSort" }, webview);
+				this.messageListener({ command: "POST.gallery.requestSort" }, webview).catch(console.error);
 				this.gFolders[folder.id].images[image.id].status = "";
 			}
 			reporter.sendTelemetryEvent(`${telemetryPrefix}.didChange`, {}, getMeasurementProperties(folders));
