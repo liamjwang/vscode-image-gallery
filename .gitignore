@@ -6,3 +6,4 @@ src/test/samples/folder*
 .vscode-test-web/
 .history
 .github
+.vscode-test
