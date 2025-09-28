@@ -102,6 +102,9 @@ class GalleryWebview {
 		
 		panel.webview.html = htmlProvider.fullHTML();
 
+		// Wait for the webview to be ready
+		await new Promise(resolve => setTimeout(resolve, 100));
+
 		// Send initial settings to webview
 		panel.webview.postMessage({
 			command: "POST.gallery.setColumnCount",
@@ -163,10 +166,10 @@ class GalleryWebview {
 				});
 				this.gFolders = this.customSorter.sort(this.gFolders, message.valueName, message.ascending);
 				reporter.sendTelemetryEvent(`${telemetryPrefix}.requestSort`, {
-					'valueName': this.customSorter.valueName,
-					'ascending': this.customSorter.ascending.toString(),
+					'valueName': message.valueName,
+					'ascending': message.ascending.toString(),
 				});
-			// DO NOT BREAK HERE; FALL THROUGH TO UPDATE DOMS
+				// DO NOT BREAK HERE; FALL THROUGH TO UPDATE DOMS
 
 			case "POST.gallery.requestContentDOMs":
 				const htmlProvider = new HTMLProvider(this.context, webview);

@@ -347,10 +347,17 @@ class EventListener {
 	static sortRequest() {
 		const dropdownDOM = document.querySelector(".toolbar .dropdown");
 		const sortOrderDOM = document.querySelector(".toolbar .sort-order-arrow-img");
-		debouncedSaveSortSettings({
+		const settings = {
 			valueName: dropdownDOM.value,
 			ascending: sortOrderDOM.src.includes("arrow-up.svg")
+		};
+		// Request sort immediately
+		vscode.postMessage({
+			command: "POST.gallery.requestSort",
+			...settings
 		});
+		// Debounce the save
+		debouncedSaveSortSettings(settings);
 	}
 }
 
