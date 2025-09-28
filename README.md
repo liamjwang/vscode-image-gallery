@@ -7,7 +7,7 @@ https://github.com/geriyoco/vscode-image-gallery/pull/134
 <!-- [![](https://github.com/geriyoco/vscode-image-gallery/actions/workflows/vsce_publish.yml/badge.svg?branch=production)](https://github.com/geriyoco/vscode-image-gallery/actions/workflows/vsce_publish.yml)
 [![](https://vsmarketplacebadge.apphb.com/version-short/geriyoco.vscode-image-gallery.svg?label=Version)](https://marketplace.visualstudio.com/items?itemName=geriyoco.vscode-image-gallery)
 [![](https://vsmarketplacebadge.apphb.com/installs-short/geriyoco.vscode-image-gallery.svg?label=Installs)](https://marketplace.visualstudio.com/items?itemName=geriyoco.vscode-image-gallery)
-[![](https://vsmarketplacebadge.apphb.com/rating-short/geriyoco.vscode-image-gallery.svg?label=Rating)](https://marketplace.visualstudio.com/items?itemName=GeriYoco.vscode-image-gallery&ssr=false#review-details) -->
+[![](https://vsmarketplacebadge.apphb.com/rating-short/geriyoco.vscode-image-gallery.svg?label=Rating)](https://marketplace.visualstudio.com/items?itemName=LiamWang.vscode-image-gallery&ssr=false#review-details) -->
 
 A light-weighted extension that brings you the best image browsing experience in VS Code, especially for remote / cloud development.
 
@@ -35,6 +35,6 @@ A light-weighted extension that brings you the best image browsing experience in
 See [here](docs/photo_credits.md) for the photo credits.
 
 ## Like this work?
-- ⭐ Star this project on [GitHub](https://github.com/geriyoco/vscode-image-gallery) or [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=GeriYoco.vscode-image-gallery)
-- ↪️ Share it with your friends: [Twitter](https://twitter.com/intent/tweet?text=Just%20discovered%20this%20on%20the%20%23VSMarketplace%3A%20https%3A%2F%2Fmarketplace.visualstudio.com%2Fitems%3FitemName%3DGeriYoco.vscode-image-gallery), [Facebook](https://www.facebook.com/sharer/sharer.php?u=https://marketplace.visualstudio.com/items?itemName=GeriYoco.vscode-image-gallery)
+- ⭐ Star this project on [GitHub](https://github.com/geriyoco/vscode-image-gallery) or [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=LiamWang.vscode-image-gallery)
+- ↪️ Share it with your friends: [Twitter](https://twitter.com/intent/tweet?text=Just%20discovered%20this%20on%20the%20%23VSMarketplace%3A%20https%3A%2F%2Fmarketplace.visualstudio.com%2Fitems%3FitemName%3DLiamWang.vscode-image-gallery), [Facebook](https://www.facebook.com/sharer/sharer.php?u=https://marketplace.visualstudio.com/items?itemName=LiamWang.vscode-image-gallery)
 - 🖥️ Contribute to the project: Start an [issue](https://github.com/geriyoco/vscode-image-gallery/issues/new) or [fork](https://github.com/geriyoco/vscode-image-gallery/fork) the repository.

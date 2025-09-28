@@ -63,7 +63,7 @@ function getUserTelemetrySetting() {
 
     const extensionIsTelemetryEnabled: (
         boolean | undefined
-    ) = vscode.workspace.getConfiguration('telemetry.geriyocoImageGallery').get('isTelemetryEnabled');
+    ) = vscode.workspace.getConfiguration('telemetry.liamwangImageGallery').get('isTelemetryEnabled');
     if (extensionIsTelemetryEnabled === false) { return false; }
 
     return true;
