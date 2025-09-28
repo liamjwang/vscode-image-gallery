@@ -4,10 +4,10 @@ https://github.com/geriyoco/vscode-image-gallery/pull/134
 
 # Image Gallery
 
-[![](https://github.com/geriyoco/vscode-image-gallery/actions/workflows/vsce_publish.yml/badge.svg?branch=production)](https://github.com/geriyoco/vscode-image-gallery/actions/workflows/vsce_publish.yml)
+<!-- [![](https://github.com/geriyoco/vscode-image-gallery/actions/workflows/vsce_publish.yml/badge.svg?branch=production)](https://github.com/geriyoco/vscode-image-gallery/actions/workflows/vsce_publish.yml)
 [![](https://vsmarketplacebadge.apphb.com/version-short/geriyoco.vscode-image-gallery.svg?label=Version)](https://marketplace.visualstudio.com/items?itemName=geriyoco.vscode-image-gallery)
 [![](https://vsmarketplacebadge.apphb.com/installs-short/geriyoco.vscode-image-gallery.svg?label=Installs)](https://marketplace.visualstudio.com/items?itemName=geriyoco.vscode-image-gallery)
-[![](https://vsmarketplacebadge.apphb.com/rating-short/geriyoco.vscode-image-gallery.svg?label=Rating)](https://marketplace.visualstudio.com/items?itemName=GeriYoco.vscode-image-gallery&ssr=false#review-details)
+[![](https://vsmarketplacebadge.apphb.com/rating-short/geriyoco.vscode-image-gallery.svg?label=Rating)](https://marketplace.visualstudio.com/items?itemName=GeriYoco.vscode-image-gallery&ssr=false#review-details) -->
 
 A light-weighted extension that brings you the best image browsing experience in VS Code, especially for remote / cloud development.
 
