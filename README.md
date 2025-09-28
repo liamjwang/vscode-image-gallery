@@ -1,3 +1,7 @@
+# Fork of geriyoco/vscode-image-gallery
+
+https://github.com/geriyoco/vscode-image-gallery/pull/134
+
 # Image Gallery
 
 [![](https://github.com/geriyoco/vscode-image-gallery/actions/workflows/vsce_publish.yml/badge.svg?branch=production)](https://github.com/geriyoco/vscode-image-gallery/actions/workflows/vsce_publish.yml)
