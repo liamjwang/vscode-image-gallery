@@ -3,10 +3,10 @@
 	"displayName": "Image Gallery",
 	"description": "Improve image browsing experience, especially for remote development.",
 	"version": "1.2.1",
-	"publisher": "GeriYoco",
+	"publisher": "LiamWang",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/geriyoco/vscode-image-gallery"
+		"url": "https://github.com/liamjwang/vscode-image-gallery"
 	},
 	"icon": "docs/logo-128.png",
 	"galleryBanner": {
