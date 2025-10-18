@@ -2,7 +2,7 @@
 	"name": "vscode-image-gallery-liamwang",
 	"displayName": "Image Gallery (LiamWang)",
 	"description": "Improve image browsing experience, especially for remote development.",
-	"version": "1.2.4",
+	"version": "1.2.5",
 	"publisher": "LiamWang",
 	"repository": {
 		"type": "git",
