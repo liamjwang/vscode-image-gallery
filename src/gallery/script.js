@@ -155,9 +155,15 @@ class DOMManager {
 					delete content[folderId].images[imageId].containerHtml;
 					EventListener.addToImageContainer(content[folderId].images[imageId].container);
 
-					const imageDom = content[folderId].images[imageId].container.querySelector("#" + imageId);
-					imageDom.src += "?t=" + Date.now();
-					imageDom.dataset.src += "?t=" + Date.now();
+					const mediaDom = content[folderId].images[imageId].container.querySelector("#" + imageId);
+					if (mediaDom.nodeName === "IMG") {
+						mediaDom.src += "?t=" + Date.now();
+						mediaDom.dataset.src += "?t=" + Date.now();
+					} else if (mediaDom.nodeName === "VIDEO") {
+						mediaDom.src += "?t=" + Date.now();
+						mediaDom.dataset.src += "?t=" + Date.now();
+						mediaDom.load(); // Reload the video
+					}
 				}
 				else { // new image
 					content[folderId].images[imageId].container = DOMManager.htmlToDOM(image.containerHtml);
@@ -222,28 +228,28 @@ class EventListener {
 
 	static addToImageContainer(imageContainer) {
 		for (const child of imageContainer.childNodes) {
-			if (child.nodeName !== "IMG") { continue; }
-			const image = child;
+			if (child.nodeName !== "IMG" && child.nodeName !== "VIDEO") { continue; }
+			const media = child;
 
 			imageContainer.addEventListener("click", () => {
-				EventListener.openImageViewer(image.dataset.path, true);
+				EventListener.openImageViewer(media.dataset.path, true);
 			});
 			imageContainer.addEventListener("dblclick", () => {
-				EventListener.openImageViewer(image.dataset.path, false);
+				EventListener.openImageViewer(media.dataset.path, false);
 			});
 			imageContainer.addEventListener("mouseover", () => {
-				const tooltip = image.previousElementSibling;
+				const tooltip = media.previousElementSibling;
 				if (!tooltip.classList.contains("tooltip")) {
 					throw new Error("DOM element is not of class tooltip");
 				}
-				EventListener.showImageMetadata(tooltip, image.dataset.meta);
+				EventListener.showImageMetadata(tooltip, media.dataset.meta);
 			});
 			imageContainer.addEventListener("mouseout", () => {
-				image.previousElementSibling.textContent = "";
+				media.previousElementSibling.textContent = "";
 			});
 
-			if (image.classList.contains("unloaded")) {
-				imageObserver.observe(image);
+			if (media.classList.contains("unloaded")) {
+				imageObserver.observe(media);
 			}
 		}
 	}
@@ -257,7 +263,7 @@ class EventListener {
 	}
 
 	static showImageMetadata(tooltipDOM, metadata) {
-		const image = tooltipDOM.nextElementSibling;
+		const media = tooltipDOM.nextElementSibling;
 
 		const data = JSON.parse(metadata);
 
@@ -276,8 +282,16 @@ class EventListener {
 		const ctimeStr = new Date(data.ctime).toLocaleString("en-US", dateOptions);
 		const mtimeStr = new Date(data.mtime).toLocaleString("en-US", dateOptions);
 
+		// Handle both images and videos
+		let dimensionsStr;
+		if (media.nodeName === "VIDEO") {
+			dimensionsStr = `Dimensions: ${media.videoWidth} x ${media.videoHeight}`;
+		} else {
+			dimensionsStr = `Dimensions: ${media.naturalWidth} x ${media.naturalHeight}`;
+		}
+
 		tooltipDOM.textContent = [
-			`Dimensions: ${image.naturalWidth} x ${image.naturalHeight}`,
+			dimensionsStr,
 			`Type: ${data.ext}`,
 			`Size: ${sizeStr}`,
 			`Modified: ${mtimeStr}`,

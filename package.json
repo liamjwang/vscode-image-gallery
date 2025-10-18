@@ -106,7 +106,7 @@
 				"priority": "default",
 				"selector": [
 					{
-						"filenamePattern": "*.{jpg,jpe,jpeg,jif,jfif,jfi,png,bmp,gif,ico,webp,avif,svg}"
+						"filenamePattern": "*.{jpg,jpe,jpeg,jif,jfif,jfi,png,bmp,gif,ico,webp,avif,svg,mp4}"
 					}
 				]
 			}
