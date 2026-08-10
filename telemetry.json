@@ -1,8 +1,8 @@
 {
     "events": {
-        "LiamWang.vscode-image-gallery-liamwang/gallery.activate": { },
-        "LiamWang.vscode-image-gallery-liamwang/gallery.deactivate": { },
-        "LiamWang.vscode-image-gallery-liamwang/gallery.createPanel": {
+        "LiamWang.image-grid/gallery.activate": { },
+        "LiamWang.image-grid/gallery.deactivate": { },
+        "LiamWang.image-grid/gallery.createPanel": {
             "duration": {
                 "classification": "SystemMetaData",
                 "purpose": "FeatureInsight",
@@ -29,13 +29,13 @@
                 "isMeasurement": true
             }
         },
-        "LiamWang.vscode-image-gallery-liamwang/gallery.messageListener.openImageViewer": {
+        "LiamWang.image-grid/gallery.messageListener.openImageViewer": {
             "preview": {
                 "classification": "SystemMetaData",
                 "purpose": "FeatureInsight"
             }
         },
-        "LiamWang.vscode-image-gallery-liamwang/gallery.messageListener.requestSort": {
+        "LiamWang.image-grid/gallery.messageListener.requestSort": {
             "valueName": {
                 "classification": "SystemMetaData",
                 "purpose": "FeatureInsight"
@@ -45,7 +45,7 @@
                 "purpose": "FeatureInsight"
             }
         },
-        "LiamWang.vscode-image-gallery-liamwang/gallery.messageListener.requestContentDOMs": {
+        "LiamWang.image-grid/gallery.messageListener.requestContentDOMs": {
             "folderCount": {
                 "classification": "SystemMetaData",
                 "purpose": "FeatureInsight",
@@ -67,7 +67,7 @@
                 "isMeasurement": true
             }
         },
-        "LiamWang.vscode-image-gallery-liamwang/gallery.createFileWatcher.didCreate": {
+        "LiamWang.image-grid/gallery.createFileWatcher.didCreate": {
             "folderCount": {
                 "classification": "SystemMetaData",
                 "purpose": "FeatureInsight",
@@ -79,7 +79,7 @@
                 "isMeasurement": true
             }
         },
-        "LiamWang.vscode-image-gallery-liamwang/gallery.createFileWatcher.didDelete": {
+        "LiamWang.image-grid/gallery.createFileWatcher.didDelete": {
             "folderCount": {
                 "classification": "SystemMetaData",
                 "purpose": "FeatureInsight",
@@ -91,7 +91,7 @@
                 "isMeasurement": true
             }
         },
-        "LiamWang.vscode-image-gallery-liamwang/gallery.createFileWatcher.didChange": {
+        "LiamWang.image-grid/gallery.createFileWatcher.didChange": {
             "folderCount": {
                 "classification": "SystemMetaData",
                 "purpose": "FeatureInsight",

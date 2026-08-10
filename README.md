@@ -1,40 +1,80 @@
-# Fork of geriyoco/vscode-image-gallery
+<p align="center">
+  <img src="docs/logo-128.png" width="96" height="96" alt="Image Grid logo">
+</p>
 
-https://github.com/geriyoco/vscode-image-gallery/pull/134
+<h1 align="center">Image Grid</h1>
 
-# Image Gallery
+<p align="center">
+  Browse images and MP4 videos as a resizable grid in VS Code — built for remote and cloud development.
+</p>
 
-<!-- [![](https://github.com/geriyoco/vscode-image-gallery/actions/workflows/vsce_publish.yml/badge.svg?branch=production)](https://github.com/geriyoco/vscode-image-gallery/actions/workflows/vsce_publish.yml)
-[![](https://vsmarketplacebadge.apphb.com/version-short/geriyoco.vscode-image-gallery.svg?label=Version)](https://marketplace.visualstudio.com/items?itemName=geriyoco.vscode-image-gallery)
-[![](https://vsmarketplacebadge.apphb.com/installs-short/geriyoco.vscode-image-gallery.svg?label=Installs)](https://marketplace.visualstudio.com/items?itemName=geriyoco.vscode-image-gallery)
-[![](https://vsmarketplacebadge.apphb.com/rating-short/geriyoco.vscode-image-gallery.svg?label=Rating)](https://marketplace.visualstudio.com/items?itemName=LiamWang.vscode-image-gallery&ssr=false#review-details) -->
+---
 
-A light-weighted extension that brings you the best image browsing experience in VS Code, especially for remote / cloud development.
+> ### This is a fork
+>
+> **Image Grid** is an independent fork of [**Image Gallery**](https://github.com/geriyoco/vscode-image-gallery)
+> by [GeriYoco](https://github.com/geriyoco) (Alex CHANDRA and TEH Chi-En), which
+> is no longer actively maintained. Nearly all of the original gallery, viewer,
+> sorting, and file-watching code is theirs, used under the MIT license — full
+> credit to them for building it.
+>
+> This fork is **not affiliated with or endorsed by GeriYoco**. It has a
+> different name, logo, extension ID, and settings namespace, and it collects no
+> telemetry. Please report problems with *this* extension
+> [here](https://github.com/liamjwang/vscode-image-gallery/issues) rather than
+> upstream. See [`NOTICE.md`](NOTICE.md) for full attribution.
 
-> 📢 **Announcement** 📢 (March 12, 2024)
-> 
-> Hi Image Gallery Users,
-> 
-> We're finally getting back on track with the extension development. Here’s what we really need from you:
-> - 💻 Code Contributions: Dive into the codebase and help us by submitting pull requests. Whether it’s adding new features, or improving the existing ones, your contributions are crucial. We'll lay out a contribution guideline soon (you may contribute to this too).
-> - 💡 Feature Suggestions: We welcome your ideas to make this tool more useful, especially for those in the computer vision field, where our extension has found a significant user base. But, suggestions for features that you think would be useful for all users are welcome too.
-> - 💬 Spread the Word: Share your experience with the extension. A wider user and contributor base helps drive the project forward.
-> 
-> Looking ahead, our goal is to collaborate closely with all users, addressing your needs and incorporating valuable enhancements. However, we may have limitations on addressing all issues promptly as we have our full-time jobs during weekdays. Your patience and contributions will highly be appreciated. Lastly, thank you for your continued support.
+## What this fork adds
 
-## Highlights
-- **Remote**: Excellent for browsing images on a cloud (e.g. via [SSH](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-ssh))
-- **Gallery**: Collapsible grid view of all images in the selected folder, including its sub-folders
-- **Performance**: Lazy loading of images (tested on 10k images with a start-up time of 1.5s)
-- **Refresh**: Automatically update view as images are modified, added, or deleted
-- **Light**: Extension size less than 1 MB, installation time is typically negligible
+Relative to upstream [v1.2.1](https://github.com/geriyoco/vscode-image-gallery/releases):
+
+- **Video support** — `.mp4` files appear as playable tiles in the grid and open in the viewer, with dimensions reported in the hover tooltip.
+- **Manual column count** — set an exact number of columns from the toolbar, or leave auto-fit enabled.
+- **Persistent settings** — column count, sort field, and sort direction are saved to your VS Code settings and restored the next time you open a grid.
+
+## Features
+
+- **Remote-friendly**: designed for browsing images over [SSH](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-ssh), containers, and cloud workspaces
+- **Grid view**: collapsible grid of every image in the selected folder and its sub-folders
+- **Lazy loading**: tested on 10k images with a start-up time of ~1.5s
+- **Live refresh**: the view updates as files are added, changed, or deleted
+- **Small**: well under 1 MB installed
 
 ## Usage
+
+Right-click any folder in the Explorer and choose **Open Image Grid 🖼️**, or run
+`Image Grid: Open Image Grid` from the Command Palette.
+
 ![demo](docs/demo-v1.0.0.gif)
 
-See [here](docs/photo_credits.md) for the photo credits.
+> The demo above is inherited from the upstream project and predates this fork's
+> video and column controls. Photo credits are in [`docs/photo_credits.md`](docs/photo_credits.md).
 
-## Like this work?
-- ⭐ Star this project on [GitHub](https://github.com/geriyoco/vscode-image-gallery) or [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=LiamWang.vscode-image-gallery)
-- ↪️ Share it with your friends: [Twitter](https://twitter.com/intent/tweet?text=Just%20discovered%20this%20on%20the%20%23VSMarketplace%3A%20https%3A%2F%2Fmarketplace.visualstudio.com%2Fitems%3FitemName%3DLiamWang.vscode-image-gallery), [Facebook](https://www.facebook.com/sharer/sharer.php?u=https://marketplace.visualstudio.com/items?itemName=LiamWang.vscode-image-gallery)
-- 🖥️ Contribute to the project: Start an [issue](https://github.com/geriyoco/vscode-image-gallery/issues/new) or [fork](https://github.com/geriyoco/vscode-image-gallery/fork) the repository.
+## Settings
+
+All settings live under the `imageGrid.` namespace.
+
+| Setting | Default | Description |
+| --- | --- | --- |
+| `imageGrid.autoColumns` | `true` | Fit the column count to the viewport width |
+| `imageGrid.columnCount` | `4` | Column count used when `autoColumns` is off |
+| `imageGrid.sortBy` | `name` | Sort by `name`, `ext`, `size`, `ctime`, or `mtime` |
+| `imageGrid.sortAscending` | `true` | Sort direction |
+| `imageGrid.sorting.byPathOptions.*` | — | Collation options passed to `String.localeCompare` for name sorting |
+
+## Contributing
+
+Issues and pull requests are welcome at
+[liamjwang/vscode-image-gallery](https://github.com/liamjwang/vscode-image-gallery).
+
+```sh
+npm install
+npm run compile
+# then press F5 in VS Code to launch an Extension Development Host
+```
+
+## License
+
+MIT — see [`LICENSE`](LICENSE), which carries both the original GeriYoco
+copyright and this fork's. Third-party attributions are in
+[`NOTICE.md`](NOTICE.md).

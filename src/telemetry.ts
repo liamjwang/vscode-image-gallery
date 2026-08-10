@@ -4,6 +4,11 @@ import TelemetryReporter, {
 } from '@vscode/extension-telemetry';
 import * as utils from './utils';
 
+// No telemetry endpoint is configured in published builds, so nothing is ever
+// sent. Set your own Application Insights key here if you build the extension
+// yourself and want the events described in telemetry.json.
+const instrumentationKey = "";
+
 export let reporter: ExtensionReporter;
 
 export function activate(context: vscode.ExtensionContext) {
@@ -21,7 +26,6 @@ export class ExtensionReporter extends TelemetryReporter {
         context: vscode.ExtensionContext,
         public verbose = false, // true for development; false for production
         public readonly enableTelemetry: boolean = getUserTelemetrySetting(),
-        private readonly instrumentationKey = "a5e759de-afbd-4f36-a9c9-2fc95385683b",
     ) {
         const extId = utils.packageJSON.publisher + '.' + utils.packageJSON.name;
         const extVersion = utils.packageJSON.version;
@@ -34,6 +38,7 @@ export class ExtensionReporter extends TelemetryReporter {
         properties?: TelemetryEventProperties | undefined,
         measurements?: TelemetryEventMeasurements | undefined,
     ) {
+        if (!instrumentationKey) { return; }
         if (!this.enableTelemetry) { return; }
         if (this.verbose) {
             console.log(`Telemetry event: ${eventName}`, properties, measurements);
@@ -63,8 +68,8 @@ function getUserTelemetrySetting() {
 
     const extensionIsTelemetryEnabled: (
         boolean | undefined
-    ) = vscode.workspace.getConfiguration('telemetry.liamwangImageGallery').get('isTelemetryEnabled');
-    if (extensionIsTelemetryEnabled === false) { return false; }
+    ) = vscode.workspace.getConfiguration('imageGrid.telemetry').get('isTelemetryEnabled');
+    if (extensionIsTelemetryEnabled !== true) { return false; }
 
     return true;
 }

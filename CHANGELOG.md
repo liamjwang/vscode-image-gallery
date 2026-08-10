@@ -1,5 +1,29 @@
 # Change Log
 
+Entries from 1.2.1 and earlier belong to the upstream project,
+[geriyoco/vscode-image-gallery](https://github.com/geriyoco/vscode-image-gallery),
+and are kept here for history. Entries from 2.0.0 onwards are this fork's.
+
+## [2.0.0] - 2026-08-10
+
+First release of the fork under its own identity, as **Image Grid**
+(`LiamWang.image-grid`).
+
+### Added
+- MP4 video support: videos render as playable tiles in the grid, open in the viewer, and report their dimensions in the hover tooltip.
+- Manual column count control in the toolbar, with an auto-fit toggle.
+- Column count, sort field, and sort direction now persist to VS Code settings and are restored when a grid is reopened.
+
+### Changed
+- Renamed from "Image Gallery" to **Image Grid**, with a new logo and an extension ID of `LiamWang.image-grid`, to keep it clearly distinct from the upstream extension.
+- **Breaking:** commands, the webview panel type, and the custom editor view type moved from the `gryc.*` namespace to `imageGrid.*`. This also means Image Grid no longer competes with upstream's custom editor registration if both extensions are installed.
+- **Breaking:** all settings moved under the `imageGrid.*` namespace — `gallery.columnCount` → `imageGrid.columnCount`, `sorting.byPathOptions.*` → `imageGrid.sorting.byPathOptions.*`, and so on. Previously configured values will need to be set again.
+- The viewer's pan/zoom library is now bundled with the extension instead of being fetched from unpkg.com at runtime, so the viewer works offline and in firewalled environments.
+- Toolbar and grid styling made more consistent.
+
+### Removed
+- All telemetry. The upstream Application Insights key has been removed, the opt-in setting now defaults to `false`, and published builds have no endpoint configured and send nothing.
+
 ## [1.2.1] - 2022-09-28
 ### Fixed
 - Supported file extensions are now consistent between [`package.json`](package.json) and [`src/utils.ts`](src/utils.ts).

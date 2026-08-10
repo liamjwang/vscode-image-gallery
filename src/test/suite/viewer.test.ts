@@ -2,7 +2,7 @@ import vscode from 'vscode';
 
 import * as utils from '../../utils';
 
-suite('LiamWang.vscode-image-gallery-liamwang: Viewer Test Suite', () => {
+suite('LiamWang.image-grid: Viewer Test Suite', () => {
 	vscode.window.showInformationMessage('Viewer Test Suite started.');
 
 	// test('viewer', async () => {

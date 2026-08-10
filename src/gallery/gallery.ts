@@ -9,7 +9,7 @@ export let disposable: vscode.Disposable;
 
 export function activate(context: vscode.ExtensionContext) {
 	const gallery = new GalleryWebview(context);
-	disposable = vscode.commands.registerCommand('gryc.openGallery',
+	disposable = vscode.commands.registerCommand('imageGrid.openGallery',
 		async (galleryFolder?: vscode.Uri) => {
 			const panel = await gallery.createPanel(galleryFolder);
 			panel.webview.onDidReceiveMessage(
@@ -43,7 +43,7 @@ class GalleryWebview {
 	constructor(private readonly context: vscode.ExtensionContext) { }
 
 	private loadGallerySettings() {
-		const config = vscode.workspace.getConfiguration('gallery');
+		const config = vscode.workspace.getConfiguration('imageGrid');
 		return {
 			columnCount: config.get('columnCount', 4),
 			autoColumns: config.get('autoColumns', true),
@@ -58,7 +58,7 @@ class GalleryWebview {
 		sortBy?: string;
 		sortAscending?: boolean;
 	}) {
-		const config = vscode.workspace.getConfiguration('gallery');
+		const config = vscode.workspace.getConfiguration('imageGrid');
 		await config.update('columnCount', settings.columnCount, vscode.ConfigurationTarget.Global);
 		await config.update('autoColumns', settings.autoColumns, vscode.ConfigurationTarget.Global);
 		await config.update('sortBy', settings.sortBy, vscode.ConfigurationTarget.Global);
@@ -81,10 +81,10 @@ class GalleryWebview {
 
 	public async createPanel(galleryFolder?: vscode.Uri) {
 		const startTime = Date.now();
-		vscode.commands.executeCommand('setContext', 'ext.viewType', 'gryc.gallery');
+		vscode.commands.executeCommand('setContext', 'ext.viewType', 'imageGrid.gallery');
 		const panel = vscode.window.createWebviewPanel(
-			'gryc.gallery',
-			`Image Gallery${galleryFolder ? ': ' + utils.getFilename(galleryFolder.path) : ''}`,
+			'imageGrid.gallery',
+			`Image Grid${galleryFolder ? ': ' + utils.getFilename(galleryFolder.path) : ''}`,
 			vscode.ViewColumn.One,
 			{
 				enableScripts: true,
