@@ -7,7 +7,7 @@ export default class CustomSorter {
     valueName: "name" | "ext" | "size" | "ctime" | "mtime";
     ascending: boolean;
 
-    private initComparator(configName: string = "sorting.byPathOptions") {
+    private initComparator(configName: string = "imageGrid.sorting.byPathOptions") {
         const config = vscode.workspace.getConfiguration(configName);
         const options = Object.fromEntries(this.sortType.map(key => [key, config.get(key)]));
         return (a: string, b: string) => {
@@ -49,7 +49,7 @@ export default class CustomSorter {
     private getSortedFolders(folders: Record<string, TFolder>) {
         /**
          * Sort the folders by path in ascending order.
-         * "sorting.byPathOptions" has no effect on this.
+         * "imageGrid.sorting.byPathOptions" has no effect on this.
          */
         return Object.fromEntries(
             Object.entries(folders).sort(

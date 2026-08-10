@@ -48,7 +48,7 @@ class TestObjects {
 	};
 }
 
-suite("GeriYoco.vscode-image-gallery: Gallery Test Suite", () => {
+suite("LiamWang.image-grid: Gallery Test Suite", () => {
 	vscode.window.showInformationMessage("Gallery Test Suite started.");
 
 	test("CustomSorter.constructor()", () => {

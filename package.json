@@ -1,16 +1,21 @@
 {
-	"name": "vscode-image-gallery",
-	"displayName": "Image Gallery",
-	"description": "Improve image browsing experience, especially for remote development.",
-	"version": "1.2.1",
-	"publisher": "GeriYoco",
+	"name": "image-grid",
+	"displayName": "Image Grid",
+	"description": "Browse images and MP4 videos as a resizable grid, with adjustable column count and persistent sorting. Built for remote and cloud development.",
+	"version": "2.0.0",
+	"publisher": "LiamWang",
+	"license": "MIT",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/geriyoco/vscode-image-gallery"
+		"url": "https://github.com/liamjwang/vscode-image-gallery"
+	},
+	"homepage": "https://github.com/liamjwang/vscode-image-gallery#readme",
+	"bugs": {
+		"url": "https://github.com/liamjwang/vscode-image-gallery/issues"
 	},
 	"icon": "docs/logo-128.png",
 	"galleryBanner": {
-		"color": "#000000",
+		"color": "#0f172a",
 		"theme": "dark"
 	},
 	"engines": {
@@ -23,83 +28,111 @@
 	],
 	"keywords": [
 		"image",
-		"remote",
-		"remote development",
-		"view",
-		"visualization"
+		"video",
+		"grid",
+		"thumbnails",
+		"remote development"
 	],
 	"activationEvents": [
-		"onCommand:gryc.openGallery",
-		"onWebviewPanel:gryc.gallery",
-		"onCustomEditor:gryc.viewer"
+		"onCommand:imageGrid.openGallery",
+		"onWebviewPanel:imageGrid.gallery",
+		"onCustomEditor:imageGrid.viewer"
 	],
 	"main": "./dist/extension.js",
 	"contributes": {
 		"configuration": {
-			"title": "Image Gallery",
+			"title": "Image Grid",
 			"properties": {
-				"sorting.byPathOptions.localeMatcher": {
+				"imageGrid.columnCount": {
+					"type": "number",
+					"default": 4,
+					"minimum": 1,
+					"maximum": 100,
+					"markdownDescription": "Number of columns to display in the grid. Only used when `#imageGrid.autoColumns#` is disabled."
+				},
+				"imageGrid.autoColumns": {
+					"type": "boolean",
+					"default": true,
+					"markdownDescription": "Whether to automatically adjust the number of columns based on the viewport width."
+				},
+				"imageGrid.sortBy": {
+					"type": "string",
+					"enum": [
+						"name",
+						"ext",
+						"size",
+						"ctime",
+						"mtime"
+					],
+					"default": "name",
+					"markdownDescription": "The property to sort images by."
+				},
+				"imageGrid.sortAscending": {
+					"type": "boolean",
+					"default": true,
+					"markdownDescription": "Whether to sort in ascending order."
+				},
+				"imageGrid.sorting.byPathOptions.localeMatcher": {
 					"type": "string",
 					"default": "best fit",
 					"markdownDescription": "The locale matching algorithm to use. Possible values are \"`lookup`\" and \"`best fit`\"."
 				},
-				"sorting.byPathOptions.sensitivity": {
+				"imageGrid.sorting.byPathOptions.sensitivity": {
 					"type": "string",
 					"default": "variant",
 					"markdownDescription": "Which differences in the strings should be taken into account. Possible values are:\n- \"`base`\": Only strings that differ in base letters compare as unequal. Examples: a ≠ b, a = á, a = A.\n- \"`accent`\": Only strings that differ in base letters or accents compare as unequal. Examples: a ≠ b, a ≠ á, a = A.\n- \"`case`\": Only strings that differ in base letters or case compare as unequal. Examples: a ≠ b, a = á, a ≠ A.\n- \"`variant`\": All strings compare as unequal."
 				},
-				"sorting.byPathOptions.ignorePunctuation": {
+				"imageGrid.sorting.byPathOptions.ignorePunctuation": {
 					"type": "boolean",
 					"default": false,
 					"markdownDescription": "Whether punctuation should be ignored."
 				},
-				"sorting.byPathOptions.numeric": {
+				"imageGrid.sorting.byPathOptions.numeric": {
 					"type": "boolean",
 					"default": true,
 					"markdownDescription": "Whether numeric collation should be used, such that \"`img1.jpg`\" > \"`img2.jpg`\" > \"`img10.jpg`\", instead of \"`img1.jpg`\" > \"`img10.jpg`\" > \"`img2.jpg`\"."
 				},
-				"sorting.byPathOptions.caseFirst": {
+				"imageGrid.sorting.byPathOptions.caseFirst": {
 					"type": "string",
 					"default": "false",
 					"markdownDescription": "Whether upper case or lower case should sort first. Possible values are \"`upper`\", \"`lower`\" or \"`false`\" (use the locale's default)."
 				},
-				"sorting.byPathOptions.collation": {
+				"imageGrid.sorting.byPathOptions.collation": {
 					"type": "string",
 					"default": null,
 					"markdownDescription": "Variant collations for certain locales. Possible values include:\n- \"`compat`\" - Arabic\n- \"`dict`\" - Sinhala\n- \"`emoji`\" - root\n- \"`eor`\" - root\n- \"`phonebk`\" - German\n- \"`phonetic`\" - Lingala\n- \"`pinyin`\" - Chinese\n- \"`reformed`\" - Swedish\n- \"`stroke`\" - Chinese\n- \"`trad`\"\n- \"`zhuyin`\" - Chinese"
 				},
-
-				"telemetry.geriyocoImageGallery.isTelemetryEnabled": {
+				"imageGrid.telemetry.isTelemetryEnabled": {
 					"type": "boolean",
-					"default": true,
-					"markdownDescription": "Enable / disable telemetry of this extension. If any of the global telemetry settings, including `telemetryLevel`, `isTelemetryEnabled`, `onDidChangeTelemetryEnabled`, rejects telemetry, this setting will be treated as `false`, i.e. this extension will not send any telemetry."
+					"default": false,
+					"markdownDescription": "Enable / disable telemetry for this extension. Disabled by default, and no telemetry endpoint is configured in published builds, so this setting has no effect unless you build the extension yourself with your own key. See [`telemetry.json`](https://github.com/liamjwang/vscode-image-gallery/blob/main/telemetry.json) for the event schema."
 				}
 			}
 		},
 		"customEditors": [
 			{
-				"displayName": "Viewer (GeriYoco Image Gallery)",
-				"viewType": "gryc.viewer",
+				"displayName": "Image Grid Viewer",
+				"viewType": "imageGrid.viewer",
 				"priority": "default",
 				"selector": [
 					{
-						"filenamePattern": "*.{jpg,jpe,jpeg,jif,jfif,jfi,png,bmp,gif,ico,webp,avif,svg}"
+						"filenamePattern": "*.{jpg,jpe,jpeg,jif,jfif,jfi,png,bmp,gif,ico,webp,avif,svg,mp4}"
 					}
 				]
 			}
 		],
 		"commands": [
 			{
-				"command": "gryc.openGallery",
-				"title": "Open Image Gallery (GeriYoco) 🖼️",
-				"category": "Image Gallery"
+				"command": "imageGrid.openGallery",
+				"title": "Open Image Grid 🖼️",
+				"category": "Image Grid"
 			}
 		],
 		"menus": {
 			"explorer/context": [
 				{
-					"command": "gryc.openGallery",
-					"group": "2_grycImageGallery@1",
+					"command": "imageGrid.openGallery",
+					"group": "2_imageGrid@1",
 					"when": "explorerResourceIsFolder && !virtualWorkspace"
 				}
 			]
@@ -110,14 +143,15 @@
 		"local-deploy": "vsce package",
 		"open-in-browser": "vscode-test-web --extensionDevelopmentPath=. .",
 		"vscode:prepublish": "npm run package",
+		"clean": "node -e \"require('fs').rmSync('dist',{recursive:true,force:true})\"",
 		"compile": "webpack",
 		"watch": "webpack --watch",
-		"package": "webpack --mode production --devtool hidden-source-map",
-		"compile-tests": "tsc -p . --outDir dist",
-		"watch-tests": "tsc -p . -w --outDir dist",
+		"package": "npm run clean && webpack --mode production --devtool hidden-source-map",
+		"compile-tests": "tsc -p . --outDir out",
+		"watch-tests": "tsc -p . -w --outDir out",
 		"pretest": "npm run compile-tests && npm run compile && npm run lint",
 		"lint": "eslint src --ext ts",
-		"test": "node ./dist/test/runTest.js"
+		"test": "node ./out/test/runTest.js"
 	},
 	"devDependencies": {
 		"@types/glob": "^7.2.0",
@@ -129,13 +163,13 @@
 		"@typescript-eslint/parser": "^5.16.0",
 		"@vscode/test-electron": "^2.1.3",
 		"@vscode/test-web": "^0.0.24",
+		"@vscode/vsce": "^2.24.0",
 		"eslint": "^8.11.0",
 		"glob": "^7.2.0",
 		"chai": "^4.3.3",
 		"mocha": "^9.2.2",
 		"ts-loader": "^9.2.8",
 		"typescript": "^4.5.5",
-		"vsce": "^2.11.0",
 		"webpack": "^5.76.0",
 		"webpack-cli": "^4.9.2"
 	},

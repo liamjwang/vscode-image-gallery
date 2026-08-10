@@ -71,6 +71,11 @@ button.codicon+.tooltip-text {
 	object-fit: contain;
 }
 
+.video {
+	width: 100%;
+	object-fit: contain;
+}
+
 .lazy {
 	opacity: 0.1;
 	will-change: opacity;

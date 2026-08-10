@@ -14,5 +14,21 @@
         "codicon",
         "codicons",
         "gryc",
-    ]
+    ],
+    "workbench.colorCustomizations": {
+        "commandCenter.border": "#e7e7e799",
+        "statusBar.background": "#2f4f4f",
+        "statusBar.foreground": "#e7e7e7",
+        "statusBarItem.hoverBackground": "#426f6f",
+        "statusBarItem.remoteBackground": "#140c14",
+        "statusBarItem.remoteForeground": "#e7e7e7",
+        "titleBar.activeBackground": "#2f4f4f",
+        "titleBar.activeForeground": "#e7e7e7",
+        "titleBar.inactiveBackground": "#2f4f4f99",
+        "titleBar.inactiveForeground": "#e7e7e799",
+        "commandCenter.foreground": "#e7e7e7",
+        "statusBar.debuggingBackground": "#2f4f4f",
+        "statusBar.debuggingForeground": "#e7e7e7"
+    },
+    "peacock.remoteColor": "#2f4f4f"
 }

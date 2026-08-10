@@ -11,7 +11,7 @@ export function readPackageJSON(context: vscode.ExtensionContext) {
 
 export function getCwd() {
 	if (!vscode.workspace.workspaceFolders) {
-		let message = "Image Gallery: Working folder not found, open a folder and try again";
+		let message = "Image Grid: Working folder not found, open a folder and try again";
 		vscode.window.showErrorMessage(message);
 		return '';
 	}

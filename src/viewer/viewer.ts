@@ -28,7 +28,7 @@ export function deactivate() {
 }
 
 export class ViewerWebview implements vscode.CustomReadonlyEditorProvider {
-	public static readonly viewType = 'gryc.viewer';
+	public static readonly viewType = 'imageGrid.viewer';
 
 	constructor(private readonly context: vscode.ExtensionContext) { }
 
@@ -52,10 +52,17 @@ export class ViewerWebview implements vscode.CustomReadonlyEditorProvider {
 export function getWebviewContent(
 	context: vscode.ExtensionContext,
 	webview: vscode.Webview,
-	imgSrc: string,
+	mediaSrc: string,
 ) {
 	const styleHref = webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, "src", 'viewer', 'style.css'));
 	const scriptUri = webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, "src", 'viewer', 'script.js'));
+	const panzoomUri = webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, "assets", 'vendor', 'panzoom.min.js'));
+
+	// Determine if this is a video file based on the file extension
+	const isVideo = mediaSrc.toLowerCase().includes('.mp4');
+	const mediaElement = isVideo ? 
+		`<video id="media" src="${mediaSrc}" autoplay loop muted playsinline></video>` :
+		`<img id="media" src="${mediaSrc}">`;
 
 	return (
 		`<!DOCTYPE html>
@@ -63,15 +70,15 @@ export function getWebviewContent(
 		<head>
 			<meta charset="UTF-8">
 			<meta name="viewport" content="width=device-width, initial-scale=1.0">
-			<meta http-equiv="Content-Security-Policy" content="img-src ${webview.cspSource} https:; script-src 'nonce-${utils.nonce}'; style-src ${webview.cspSource};">
+			<meta http-equiv="Content-Security-Policy" content="img-src ${webview.cspSource} https:; media-src ${webview.cspSource}; script-src 'nonce-${utils.nonce}'; style-src ${webview.cspSource};">
 			<link href="${styleHref}" rel="stylesheet" />
-			<script nonce="${utils.nonce}" src='https://unpkg.com/panzoom@9.4.0/dist/panzoom.min.js'></script>
+			<script nonce="${utils.nonce}" src="${panzoomUri}"></script>
 
-			<title>Image Gallery: Viewer</title>
+			<title>Image Grid: Viewer</title>
 			</head>
 		<body>
 			<div id="container">
-				<img id="image" src="${imgSrc}">
+				${mediaElement}
 			</div>
 				
 			<script nonce="${utils.nonce}" src="${scriptUri}"></script>

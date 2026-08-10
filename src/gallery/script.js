@@ -19,6 +19,37 @@ function init() {
 	EventListener.addAllToToolbar();
 }
 
+// Debounce function to limit how often we save settings
+function debounce(func, wait) {
+	let timeout;
+	return function executedFunction(...args) {
+		const later = () => {
+			clearTimeout(timeout);
+			func(...args);
+		};
+		clearTimeout(timeout);
+		timeout = setTimeout(later, wait);
+	};
+}
+
+// Debounced function to save column settings
+const debouncedSaveColumnSettings = debounce((settings) => {
+	vscode.postMessage({
+		command: 'POST.gallery.updateColumnCount',
+		columnCount: settings.columnCount,
+		autoColumns: settings.autoColumns
+	});
+}, 500);
+
+// Debounced function to save sort settings
+const debouncedSaveSortSettings = debounce((settings) => {
+	vscode.postMessage({
+		command: 'POST.gallery.requestSort',
+		valueName: settings.valueName,
+		ascending: settings.ascending
+	});
+}, 500);
+
 function initMessageListeners() {
 	window.addEventListener("message", event => {
 		const message = event.data;
@@ -28,9 +59,24 @@ function initMessageListeners() {
 			case "POST.gallery.responseContentDOMs":
 				DOMManager.updateGlobalDoms(message);
 				DOMManager.updateGalleryContent();
+				// Apply current settings after content is rendered
+				updateColumnCount(columnInput.value);
 				break;
 			case "POST.gallery.setColumnCount":
+				columnInput.value = message.columnCount;
+				autoCheckbox.checked = message.autoColumns;
+				updateColumnControlState();
 				updateColumnCount(message.columnCount);
+				break;
+			case "POST.gallery.setSortSettings":
+				const dropdownDOM = document.querySelector(".toolbar .dropdown");
+				const sortOrderDOM = document.querySelector(".toolbar .sort-order-arrow-img");
+				dropdownDOM.value = message.valueName;
+				if (message.ascending) {
+					sortOrderDOM.src = sortOrderDOM.dataset.arrowUp;
+				} else {
+					sortOrderDOM.src = sortOrderDOM.dataset.arrowDown;
+				}
 				break;
 		}
 	});
@@ -109,9 +155,15 @@ class DOMManager {
 					delete content[folderId].images[imageId].containerHtml;
 					EventListener.addToImageContainer(content[folderId].images[imageId].container);
 
-					const imageDom = content[folderId].images[imageId].container.querySelector("#" + imageId);
-					imageDom.src += "?t=" + Date.now();
-					imageDom.dataset.src += "?t=" + Date.now();
+					const mediaDom = content[folderId].images[imageId].container.querySelector("#" + imageId);
+					if (mediaDom.nodeName === "IMG") {
+						mediaDom.src += "?t=" + Date.now();
+						mediaDom.dataset.src += "?t=" + Date.now();
+					} else if (mediaDom.nodeName === "VIDEO") {
+						mediaDom.src += "?t=" + Date.now();
+						mediaDom.dataset.src += "?t=" + Date.now();
+						mediaDom.load(); // Reload the video
+					}
 				}
 				else { // new image
 					content[folderId].images[imageId].container = DOMManager.htmlToDOM(image.containerHtml);
@@ -176,28 +228,28 @@ class EventListener {
 
 	static addToImageContainer(imageContainer) {
 		for (const child of imageContainer.childNodes) {
-			if (child.nodeName !== "IMG") { continue; }
-			const image = child;
+			if (child.nodeName !== "IMG" && child.nodeName !== "VIDEO") { continue; }
+			const media = child;
 
 			imageContainer.addEventListener("click", () => {
-				EventListener.openImageViewer(image.dataset.path, true);
+				EventListener.openImageViewer(media.dataset.path, true);
 			});
 			imageContainer.addEventListener("dblclick", () => {
-				EventListener.openImageViewer(image.dataset.path, false);
+				EventListener.openImageViewer(media.dataset.path, false);
 			});
 			imageContainer.addEventListener("mouseover", () => {
-				const tooltip = image.previousElementSibling;
+				const tooltip = media.previousElementSibling;
 				if (!tooltip.classList.contains("tooltip")) {
 					throw new Error("DOM element is not of class tooltip");
 				}
-				EventListener.showImageMetadata(tooltip, image.dataset.meta);
+				EventListener.showImageMetadata(tooltip, media.dataset.meta);
 			});
 			imageContainer.addEventListener("mouseout", () => {
-				image.previousElementSibling.textContent = "";
+				media.previousElementSibling.textContent = "";
 			});
 
-			if (image.classList.contains("unloaded")) {
-				imageObserver.observe(image);
+			if (media.classList.contains("unloaded")) {
+				imageObserver.observe(media);
 			}
 		}
 	}
@@ -211,7 +263,7 @@ class EventListener {
 	}
 
 	static showImageMetadata(tooltipDOM, metadata) {
-		const image = tooltipDOM.nextElementSibling;
+		const media = tooltipDOM.nextElementSibling;
 
 		const data = JSON.parse(metadata);
 
@@ -230,8 +282,16 @@ class EventListener {
 		const ctimeStr = new Date(data.ctime).toLocaleString("en-US", dateOptions);
 		const mtimeStr = new Date(data.mtime).toLocaleString("en-US", dateOptions);
 
+		// Handle both images and videos
+		let dimensionsStr;
+		if (media.nodeName === "VIDEO") {
+			dimensionsStr = `Dimensions: ${media.videoWidth} x ${media.videoHeight}`;
+		} else {
+			dimensionsStr = `Dimensions: ${media.naturalWidth} x ${media.naturalHeight}`;
+		}
+
 		tooltipDOM.textContent = [
-			`Dimensions: ${image.naturalWidth} x ${image.naturalHeight}`,
+			dimensionsStr,
 			`Type: ${data.ext}`,
 			`Size: ${sizeStr}`,
 			`Modified: ${mtimeStr}`,
@@ -301,11 +361,17 @@ class EventListener {
 	static sortRequest() {
 		const dropdownDOM = document.querySelector(".toolbar .dropdown");
 		const sortOrderDOM = document.querySelector(".toolbar .sort-order-arrow-img");
+		const settings = {
+			valueName: dropdownDOM.value,
+			ascending: sortOrderDOM.src.includes("arrow-up.svg")
+		};
+		// Request sort immediately
 		vscode.postMessage({
 			command: "POST.gallery.requestSort",
-			valueName: dropdownDOM.value,
-			ascending: sortOrderDOM.src.includes("arrow-up.svg") ? true : false,
+			...settings
 		});
+		// Debounce the save
+		debouncedSaveSortSettings(settings);
 	}
 }
 
@@ -339,11 +405,11 @@ columnInput.addEventListener('change', (e) => {
 	if (autoCheckbox.checked) {return;}
 	const value = Math.min(Math.max(parseInt(e.target.value) || 1, 1), 100);
 	e.target.value = value;
-	vscode.postMessage({
-		command: 'POST.gallery.updateColumnCount',
-		columnCount: value
-	});
 	updateColumnCount(value);
+	debouncedSaveColumnSettings({
+		columnCount: value,
+		autoColumns: autoCheckbox.checked
+	});
 });
 
 columnArrows.forEach(arrow => {
@@ -356,24 +422,29 @@ columnArrows.forEach(arrow => {
 			: Math.max(currentValue - 1, 1);
 		
 		columnInput.value = newValue;
-		vscode.postMessage({
-			command: 'POST.gallery.updateColumnCount',
-			columnCount: newValue
-		});
 		updateColumnCount(newValue);
+		debouncedSaveColumnSettings({
+			columnCount: newValue,
+			autoColumns: autoCheckbox.checked
+		});
 	});
 });
 
 autoCheckbox.addEventListener('change', () => {
 	updateColumnControlState();
-	vscode.postMessage({
-		command: 'POST.gallery.updateColumnCount',
-		columnCount: autoCheckbox.checked ? null : columnInput.value
+	debouncedSaveColumnSettings({
+		columnCount: columnInput.value,
+		autoColumns: autoCheckbox.checked
 	});
 });
 
 // Initialize column control state
 updateColumnControlState();
+
+// Request initial content
+vscode.postMessage({
+	command: "POST.gallery.requestContentDOMs"
+});
 
 (function () {
 	init();

@@ -43,6 +43,7 @@ export default class HTMLProvider {
 			`script-src 'nonce-${utils.nonce}';`,
 			`font-src ${this.webview.cspSource};`,
 			`img-src ${this.webview.cspSource} https:;`,
+			`media-src ${this.webview.cspSource};`,
 			`style-src ${this.webview.cspSource};`,
 		].join(' ');
 		return `
@@ -151,9 +152,23 @@ export default class HTMLProvider {
 			mtime: image.mtime,
 			ctime: image.ctime,
 		};
-		return `
-		<div class="image-container tooltip">
-			<span id="${image.id}-tooltip" class="tooltip tooltip-text"></span>
+		
+		const isVideo = image.ext.toLowerCase() === 'mp4';
+		const mediaElement = isVideo ? `
+			<video
+				id="${image.id}"
+				src="${this.webview.asWebviewUri(image.uri)}"
+				data-src="${this.webview.asWebviewUri(image.uri)}"
+				data-path="${image.uri.path}"
+				data-meta='${JSON.stringify(metadata)}'
+				class="image video loaded"
+				autoplay
+				loop
+				muted
+				playsinline
+			>
+			</video>
+		` : `
 			<img
 				id="${image.id}"
 				src="${this.placeholderUri}"
@@ -162,6 +177,12 @@ export default class HTMLProvider {
 				data-meta='${JSON.stringify(metadata)}'
 				class="image unloaded"
 			>
+		`;
+		
+		return `
+		<div class="image-container tooltip">
+			<span id="${image.id}-tooltip" class="tooltip tooltip-text"></span>
+			${mediaElement}
 			<div id="${image.id}-filename" class="filename">${utils.getFilename(image.uri.path)}</div>
 		</div>
 		`.trim();
