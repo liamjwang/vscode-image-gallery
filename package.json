@@ -2,7 +2,7 @@
 	"name": "image-grid",
 	"displayName": "Image Grid",
 	"description": "Browse images and MP4 videos as a resizable grid, with adjustable column count and persistent sorting. Built for remote and cloud development.",
-	"version": "2.0.0",
+	"version": "2.0.1",
 	"publisher": "LiamWang",
 	"license": "MIT",
 	"repository": {

@@ -2,9 +2,9 @@
 
 Entries from 1.2.1 and earlier belong to the upstream project,
 [geriyoco/vscode-image-gallery](https://github.com/geriyoco/vscode-image-gallery),
-and are kept here for history. Entries from 2.0.0 onwards are this fork's.
+and are kept here for history. Entries from 2.0.1 onwards are this fork's.
 
-## [2.0.0] - 2026-08-10
+## [2.0.1] - 2026-08-10
 
 First release of the fork under its own identity, as **Image Grid**
 (`LiamWang.image-grid`).
@@ -16,13 +16,13 @@ First release of the fork under its own identity, as **Image Grid**
 
 ### Changed
 - Renamed from "Image Gallery" to **Image Grid**, with a new logo and an extension ID of `LiamWang.image-grid`, to keep it clearly distinct from the upstream extension.
-- **Breaking:** commands, the webview panel type, and the custom editor view type moved from the `gryc.*` namespace to `imageGrid.*`. This also means Image Grid no longer competes with upstream's custom editor registration if both extensions are installed.
+- **Breaking:** commands, the webview panel type, and the custom editor view type moved from the `gryc.*` namespace to `imageGrid.*`, so Image Grid registers its own identifiers and can be installed alongside other gallery extensions.
 - **Breaking:** all settings moved under the `imageGrid.*` namespace — `gallery.columnCount` → `imageGrid.columnCount`, `sorting.byPathOptions.*` → `imageGrid.sorting.byPathOptions.*`, and so on. Previously configured values will need to be set again.
-- The viewer's pan/zoom library is now bundled with the extension instead of being fetched from unpkg.com at runtime, so the viewer works offline and in firewalled environments.
+- The viewer's pan/zoom library is now bundled with the extension, so the viewer works offline and in firewalled environments.
 - Toolbar and grid styling made more consistent.
 
 ### Removed
-- All telemetry. The upstream Application Insights key has been removed, the opt-in setting now defaults to `false`, and published builds have no endpoint configured and send nothing.
+- All telemetry. Published builds have no analytics endpoint configured, the opt-in setting defaults to `false`, and nothing is sent.
 
 ## [1.2.1] - 2022-09-28
 ### Fixed

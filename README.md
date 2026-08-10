@@ -35,7 +35,7 @@ Relative to upstream [v1.2.1](https://github.com/geriyoco/vscode-image-gallery/r
 
 - **Remote-friendly**: designed for browsing images over [SSH](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-ssh), containers, and cloud workspaces
 - **Grid view**: collapsible grid of every image in the selected folder and its sub-folders
-- **Lazy loading**: tested on 10k images with a start-up time of ~1.5s
+- **Lazy loading**: thumbnails load as they scroll into view, so large folders stay responsive
 - **Live refresh**: the view updates as files are added, changed, or deleted
 - **Small**: well under 1 MB installed
 
