@@ -13,8 +13,7 @@
 > ### This is a fork
 >
 > **Image Grid** is an independent fork of [**Image Gallery**](https://github.com/geriyoco/vscode-image-gallery)
-> by [GeriYoco](https://github.com/geriyoco) (Alex CHANDRA and TEH Chi-En), which
-> is no longer actively maintained. Nearly all of the original gallery, viewer,
+> by [GeriYoco](https://github.com/geriyoco) (Alex CHANDRA and TEH Chi-En). Nearly all of the original gallery, viewer,
 > sorting, and file-watching code is theirs, used under the MIT license — full
 > credit to them for building it.
 >
